@@ -6,7 +6,7 @@
 (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
 ;; sorter.el
-;; (install-elisp "http://www.bookshelf.jp/elc/sorter.el")
+;; (auto-install-from-url "http://www.bookshelf.jp/elc/sorter.el")
 (load "sorter.el")
 
 ;; today highlight

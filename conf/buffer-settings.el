@@ -2,8 +2,8 @@
 ;;; buffer-setting.el --- setup buffer utility
 
 ;; color-moccur
-;; (install-elisp-from-emacswiki "color-moccur.el")
-;; (install-elisp-from-emacswiki "moccur-edit.el")
+;; (auto-install-from-emacswiki "color-moccur")
+;; (auto-install-from-emacswiki "moccur-edit")
 (require 'color-moccur)
 (require 'moccur-edit)
 
@@ -62,7 +62,7 @@
                            (concat "mode: " mode-name " Mode"))))))))
 
 ;; protbuf
-;; (install-elisp "http://www.splode.com/~friedman/software/emacs-lisp/src/protbuf.el")
+;; (auto-install-from-url "http://www.splode.com/~friedman/software/emacs-lisp/src/protbuf.el")
 ;; (require 'protbuf) 
 
 ;; Phenix Scratch Buffer
@@ -97,7 +97,7 @@
                         (my-make-scratch 1)))))
 
 ;; Auto save buffers enhanced
-;; (install-elisp "http://coderepos.org/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
+;; (auto-install-from-url "http://coderepos.org/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
 ;; (require 'auto-save-buffers-enhanced)
 ;; (auto-save-buffers-enhanced-include-only-checkout-path t)
 ;; (auto-save-buffers-enhanced t)

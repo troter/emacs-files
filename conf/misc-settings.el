@@ -14,7 +14,7 @@
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-;; (install-elisp "http://stud4.tuwien.ac.at/~e0225855/linum/linum.el")
+;; (auto-install-from-url "http://stud4.tuwien.ac.at/~e0225855/linum/linum.el")
 (when emacs22-p
   (require 'linum))
 

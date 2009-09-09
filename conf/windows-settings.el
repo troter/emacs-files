@@ -8,7 +8,7 @@
     (setq exec-suffix-list '(".exe" ".sh" ".pl"))
     (setq shell-file-name-chars "~/A-Za-z0-9_^$!#%&{}@`'.:()-"))
   ;; cygwin-mount
-  ;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/cygwin-mount.el")
+  ;; (auto-install-from-emacswiki "cygwin-mount")
   (setq cygwin-mount-cygwin-bin-directory
         (concat (getenv "windir") "\\..\\" "cygwin\\bin"))
   (when (require 'cygwin-mount)
