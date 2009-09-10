@@ -97,8 +97,7 @@
                         (my-make-scratch 1)))))
 
 ;; Auto save buffers enhanced
-
-;; (auto-install-from-url "http://coderepos.org/share/export/35308/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
+;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
 ;; (require 'auto-save-buffers-enhanced)
 ;; (auto-save-buffers-enhanced-include-only-checkout-path t)
 ;; (auto-save-buffers-enhanced t)

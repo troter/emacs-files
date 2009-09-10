@@ -1,141 +1,245 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  
-  
+;;; auto-save-buffers-enhanced.el --- Automatically save buffers in a decent way
+;; -*- coding: utf-8; mode:emacs-lisp -*-
 
-  
-<head>
-    <title>
-      /lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el –
-      CodeRepos::Share – Trac
-    </title>
-        <link rel="search" href="/share/search" />
-        <link rel="help" href="/share/wiki/TracGuide" />
-        <link rel="alternate" href="/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el?format=txt" type="text/plain" title="Plain Text" /><link rel="alternate" href="/share/export/35203/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" type="text/x-elisp; charset=utf-8" title="Original Format" />
-        <link rel="up" href="/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk" title="Parent directory" />
-        <link rel="start" href="/share/wiki" />
-        <link rel="stylesheet" href="/share/chrome/common/css/trac.css" type="text/css" /><link rel="stylesheet" href="/share/chrome/common/css/code.css" type="text/css" /><link rel="stylesheet" href="/share/chrome/common/css/browser.css" type="text/css" />
-        <link rel="shortcut icon" href="/share/chrome/common/trac.ico" type="image/x-icon" />
-        <link rel="icon" href="/share/chrome/common/trac.ico" type="image/x-icon" />
-      <link type="application/opensearchdescription+xml" rel="search" href="/share/search/opensearch" title="Search CodeRepos::Share" />
-    <script type="text/javascript" src="/share/chrome/common/js/jquery.js"></script><script type="text/javascript" src="/share/chrome/common/js/trac.js"></script><script type="text/javascript" src="/share/chrome/common/js/search.js"></script>
-    <!--[if lt IE 7]>
-    <script type="text/javascript" src="/share/chrome/common/js/ie_pre7_hacks.js"></script>
-    <![endif]-->
-    <link rel="stylesheet" type="text/css" media="screen,tv,projection" title="ass-ari" href="http://svn.coderepos.org/share/websites/coderepos.org/trac/share/styles/ass-ari.css" /><link rel="alternate stylesheet" type="text/css" media="screen,tv,projection" title="plants-repository" href="http://svn.coderepos.org/share/websites/coderepos.org/trac/share/styles/plants-repository.css" /><link rel="alternate stylesheet" type="text/css" media="screen,tv,projection" title="default" href="http://svn.coderepos.org/share/websites/coderepos.org/trac/share/styles/default.css" /><link rel="openid2.provider" href="http://openid.coderepos.org/auth" /><link rel="openid.server" href="http://openid.coderepos.org/auth" /><script type="text/javascript" src="http://svn.coderepos.org/share/lang/javascript/javascript-xpath/trunk/release/javascript-xpath-latest-cmp.js"></script><script type="text/javascript" src="http://svn.coderepos.org/share/lang/javascript/javascript-xpath/bindings/jquery/src/xpath4jquery.js"></script><script type="text/javascript" src="http://svn.coderepos.org/share/websites/coderepos.org/trac/share/js/TracUtils.js"></script>
-  </head>
+;; Copyright (C) 2007 Kentaro Kuribayashi
+;; Author: Kentaro Kuribayashi <kentarok@gmail.com>
+;; Note  : auto-save-buffers-enhanced.el borrows main ideas and some
+;;         codes written by Satoru Takabayashi and enhances original
+;;         one. Thanks a lot!!!
+;;         See http://0xcc.net/misc/auto-save/
 
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published
+;; by the Free Software Foundation; either version 2, or (at your
+;; option) any later version.
 
-  
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
 
-  <head>
-    <title>/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el</title>
-    <script type="text/javascript">
-      jQuery(document).ready(function($) {
-        $("#jumploc input").hide();
-        $("#jumploc select").change(function () {
-          this.parentNode.parentNode.submit();
-        })
-      });
-    </script>
-  </head>
-  <body>
-    <div id="banner">
-      <div id="header">
-        <a id="logo" href="/share/wiki/TracIni#header_logo-section"><img src="/share/chrome/site/your_project_logo.png" alt="(please configure the [header_logo] section in trac.ini)" /></a>
-      </div>
-      <form id="search" action="/share/search" method="get">
-        <div>
-          <label for="proj-search">Search:</label>
-          <input type="text" id="proj-search" name="q" size="18" value="" />
-          <input type="submit" value="Search" />
-        </div>
-      </form>
-      <div id="metanav" class="nav">
-    <ul>
-      <li class="first"><a href="/share/login">Login</a></li><li><a href="/share/prefs">Preferences</a></li><li><a href="/share/wiki/TracGuide">Help/Guide</a></li><li class="last"><a href="/share/about">About Trac</a></li>
-    </ul>
-  </div>
-    </div>
-    <div id="mainnav" class="nav">
-    <ul>
-      <li class="first"><a href="/share/wiki">Wiki</a></li><li><a href="/share/timeline">Timeline</a></li><li><a href="/share/roadmap">Roadmap</a></li><li class="active"><a href="/share/browser">Browse Source</a></li><li><a href="/share/report">View Tickets</a></li><li class="last"><a href="/share/search">Search</a></li>
-    </ul>
-  </div>
-    <div id="main">
-      <div id="ctxtnav" class="nav">
-        <h2>Context Navigation</h2>
-          <ul>
-            <li class="first "><a href="/share/changeset/7957/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el">Last Change</a></li><li><a href="/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el?annotate=blame&amp;rev=7957" title="Annotate each line with the last changed revision (this can be time consuming...)">Annotate</a></li><li class="last"><a href="/share/log/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el">Revision Log</a></li>
-          </ul>
-        <hr />
-      </div>
-    <div id="content" class="browser">
-      <h1>
-    <a class="pathentry first" title="Go to root directory" href="/share/browser">root</a><span class="pathentry sep">/</span><a class="pathentry" title="View lang" href="/share/browser/lang">lang</a><span class="pathentry sep">/</span><a class="pathentry" title="View elisp" href="/share/browser/lang/elisp">elisp</a><span class="pathentry sep">/</span><a class="pathentry" title="View auto-save-buffers-enhanced" href="/share/browser/lang/elisp/auto-save-buffers-enhanced">auto-save-buffers-enhanced</a><span class="pathentry sep">/</span><a class="pathentry" title="View trunk" href="/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk">trunk</a><span class="pathentry sep">/</span><a class="pathentry" title="View auto-save-buffers-enhanced.el" href="/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el">auto-save-buffers-enhanced.el</a>
-    <br style="clear: both" />
-  </h1>
-      <div id="jumprev">
-        <form action="" method="get">
-          <div>
-            <label for="rev">
-              View revision:</label>
-            <input type="text" id="rev" name="rev" size="6" />
-          </div>
-        </form>
-      </div>
-      <table id="info" summary="Revision info">
-        <tr>
-          <th scope="col">
-            Revision <a href="/share/changeset/7957">7957</a>, <span title="9408 bytes">9.2 kB</span>
-            (checked in by kentaro, <a class="timeline" href="/share/timeline?from=2008-03-14T20%3A04%3A29Z%2B0900&amp;precision=second" title="2008-03-14T20:04:29Z+0900 in Timeline">18 months</a> ago)
-          </th>
-        </tr>
-        <tr>
-          <td class="message searchable">
-              <p>
-lang/elisp/auto-save-buffers-enhanced: fixed a typo: s/activitiy/avtivity/ <br />
-</p>
-          </td>
-        </tr>
-      </table>
-      <div id="preview" class="searchable">
-    <table class="code"><thead><tr><th class="lineno" title="Line numbers">Line</th><th class="content"> </th></tr></thead><tbody><tr><th id="L1"><a href="#L1">1</a></th><td>;;; auto-save-buffers-enhanced.el --- Automatically save buffers in a decent way</td></tr><tr><th id="L2"><a href="#L2">2</a></th><td>;; -*- coding: utf-8; mode:emacs-lisp -*-</td></tr><tr><th id="L3"><a href="#L3">3</a></th><td></td></tr><tr><th id="L4"><a href="#L4">4</a></th><td>;; Copyright (C) 2007 Kentaro Kuribayashi</td></tr><tr><th id="L5"><a href="#L5">5</a></th><td>;; Author: Kentaro Kuribayashi &lt;kentarok@gmail.com&gt;</td></tr><tr><th id="L6"><a href="#L6">6</a></th><td>;; Note  : auto-save-buffers-enhanced.el borrows main ideas and some</td></tr><tr><th id="L7"><a href="#L7">7</a></th><td>;;         codes written by Satoru Takabayashi and enhances original</td></tr><tr><th id="L8"><a href="#L8">8</a></th><td>;;         one. Thanks a lot!!!</td></tr><tr><th id="L9"><a href="#L9">9</a></th><td>;;         See http://0xcc.net/misc/auto-save/</td></tr><tr><th id="L10"><a href="#L10">10</a></th><td></td></tr><tr><th id="L11"><a href="#L11">11</a></th><td>;; This file is free software; you can redistribute it and/or modify</td></tr><tr><th id="L12"><a href="#L12">12</a></th><td>;; it under the terms of the GNU General Public License as published</td></tr><tr><th id="L13"><a href="#L13">13</a></th><td>;; by the Free Software Foundation; either version 2, or (at your</td></tr><tr><th id="L14"><a href="#L14">14</a></th><td>;; option) any later version.</td></tr><tr><th id="L15"><a href="#L15">15</a></th><td></td></tr><tr><th id="L16"><a href="#L16">16</a></th><td>;; This file is distributed in the hope that it will be useful, but</td></tr><tr><th id="L17"><a href="#L17">17</a></th><td>;; WITHOUT ANY WARRANTY; without even the implied warranty of</td></tr><tr><th id="L18"><a href="#L18">18</a></th><td>;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</td></tr><tr><th id="L19"><a href="#L19">19</a></th><td>;; General Public License for more details.</td></tr><tr><th id="L20"><a href="#L20">20</a></th><td></td></tr><tr><th id="L21"><a href="#L21">21</a></th><td>;; You should have received a copy of the GNU General Public License</td></tr><tr><th id="L22"><a href="#L22">22</a></th><td>;; along with GNU Emacs; see the file COPYING.  If not, write to the</td></tr><tr><th id="L23"><a href="#L23">23</a></th><td>;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,</td></tr><tr><th id="L24"><a href="#L24">24</a></th><td>;; Boston, MA 02111-1307, USA.</td></tr><tr><th id="L25"><a href="#L25">25</a></th><td></td></tr><tr><th id="L26"><a href="#L26">26</a></th><td>;;; Commentary:</td></tr><tr><th id="L27"><a href="#L27">27</a></th><td></td></tr><tr><th id="L28"><a href="#L28">28</a></th><td>;; * Description</td></tr><tr><th id="L29"><a href="#L29">29</a></th><td>;;</td></tr><tr><th id="L30"><a href="#L30">30</a></th><td>;; Emacs's native auto-save feature simply</td></tr><tr><th id="L31"><a href="#L31">31</a></th><td>;; sucks. auto-save-buffers-enhanced.el provides such and other more</td></tr><tr><th id="L32"><a href="#L32">32</a></th><td>;; useful features which only require a few configurations to set up.</td></tr><tr><th id="L33"><a href="#L33">33</a></th><td>;;</td></tr><tr><th id="L34"><a href="#L34">34</a></th><td>;; auto-save-buffers-enhanced.el borrows main ideas and some codes</td></tr><tr><th id="L35"><a href="#L35">35</a></th><td>;; written by Satoru Takabayashi and enhances the original one. Thanks</td></tr><tr><th id="L36"><a href="#L36">36</a></th><td>;; a lot!!!</td></tr><tr><th id="L37"><a href="#L37">37</a></th><td>;;</td></tr><tr><th id="L38"><a href="#L38">38</a></th><td>;; See http://0xcc.net/misc/auto-save/</td></tr><tr><th id="L39"><a href="#L39">39</a></th><td>;;</td></tr><tr><th id="L40"><a href="#L40">40</a></th><td>;; * Usage</td></tr><tr><th id="L41"><a href="#L41">41</a></th><td>;;</td></tr><tr><th id="L42"><a href="#L42">42</a></th><td>;; Just simply put the code below into your .emacs:</td></tr><tr><th id="L43"><a href="#L43">43</a></th><td>;;</td></tr><tr><th id="L44"><a href="#L44">44</a></th><td>;;   (require 'auto-save-buffers-enhanced)</td></tr><tr><th id="L45"><a href="#L45">45</a></th><td>;;   (auto-save-buffers-enhanced t)</td></tr><tr><th id="L46"><a href="#L46">46</a></th><td>;;</td></tr><tr><th id="L47"><a href="#L47">47</a></th><td>;; You can explicitly set what kind of files should or should not be</td></tr><tr><th id="L48"><a href="#L48">48</a></th><td>;; auto-saved. Pass a list of regexps like below:</td></tr><tr><th id="L49"><a href="#L49">49</a></th><td>;;</td></tr><tr><th id="L50"><a href="#L50">50</a></th><td>;;   (setq auto-save-buffers-enhanced-include-regexps '(".+"))</td></tr><tr><th id="L51"><a href="#L51">51</a></th><td>;;   (setq auto-save-buffers-enhanced-exclude-regexps '("^not-save-file" "\\.ignore$"))</td></tr><tr><th id="L52"><a href="#L52">52</a></th><td>;;</td></tr><tr><th id="L53"><a href="#L53">53</a></th><td>;; If you want `auto-save-buffers-enhanced' to work only with the files under</td></tr><tr><th id="L54"><a href="#L54">54</a></th><td>;; the directories checked out from VCS such as CVS, Subversion, and</td></tr><tr><th id="L55"><a href="#L55">55</a></th><td>;; svk, put the code below into your .emacs:</td></tr><tr><th id="L56"><a href="#L56">56</a></th><td>;;</td></tr><tr><th id="L57"><a href="#L57">57</a></th><td>;;   ;; If you're using CVS or Subversion or git</td></tr><tr><th id="L58"><a href="#L58">58</a></th><td>;;   (require 'auto-save-buffers-enhanced)</td></tr><tr><th id="L59"><a href="#L59">59</a></th><td>;;   (auto-save-buffers-enhanced-include-only-checkout-path t)</td></tr><tr><th id="L60"><a href="#L60">60</a></th><td>;;   (auto-save-buffers-enhanced t)</td></tr><tr><th id="L61"><a href="#L61">61</a></th><td>;;</td></tr><tr><th id="L62"><a href="#L62">62</a></th><td>;;   ;; If you're using also svk</td></tr><tr><th id="L63"><a href="#L63">63</a></th><td>;;   (require 'auto-save-buffers-enhanced)</td></tr><tr><th id="L64"><a href="#L64">64</a></th><td>;;   (setq auto-save-buffers-enhanced-use-svk-flag t)</td></tr><tr><th id="L65"><a href="#L65">65</a></th><td>;;   (auto-save-buffers-enhanced-include-only-checkout-path t)</td></tr><tr><th id="L66"><a href="#L66">66</a></th><td>;;   (auto-save-buffers-enhanced t)</td></tr><tr><th id="L67"><a href="#L67">67</a></th><td>;;</td></tr><tr><th id="L68"><a href="#L68">68</a></th><td>;; You can toggle `auto-save-buffers-enhanced' activity to execute</td></tr><tr><th id="L69"><a href="#L69">69</a></th><td>;; `auto-save-buffers-enhanced-toggle-activity'. For convinience, you</td></tr><tr><th id="L70"><a href="#L70">70</a></th><td>;; might want to set keyboard shortcut of the command like below:</td></tr><tr><th id="L71"><a href="#L71">71</a></th><td>;;</td></tr><tr><th id="L72"><a href="#L72">72</a></th><td>;;   (global-set-key "\C-xas" 'auto-save-buffers-enhanced-toggle-activity)</td></tr><tr><th id="L73"><a href="#L73">73</a></th><td>;;</td></tr><tr><th id="L74"><a href="#L74">74</a></th><td>;; Make sure that you must reload the SVK checkout paths from your</td></tr><tr><th id="L75"><a href="#L75">75</a></th><td>;; configuration file such as `~/.svk/config', in which SVK stores the</td></tr><tr><th id="L76"><a href="#L76">76</a></th><td>;; information on checkout paths, by executing</td></tr><tr><th id="L77"><a href="#L77">77</a></th><td>;; `auto-save-buffers-reload-svk' after you check new files out from</td></tr><tr><th id="L78"><a href="#L78">78</a></th><td>;; your local repository. You can set a keyboard shortcut for it like</td></tr><tr><th id="L79"><a href="#L79">79</a></th><td>;; below:</td></tr><tr><th id="L80"><a href="#L80">80</a></th><td>;;</td></tr><tr><th id="L81"><a href="#L81">81</a></th><td>;;   (global-set-key "\C-xar" 'auto-save-buffers-enhanced-reload-svk)</td></tr><tr><th id="L82"><a href="#L82">82</a></th><td>;;</td></tr><tr><th id="L83"><a href="#L83">83</a></th><td>;; For more details about customizing, see the section below:</td></tr><tr><th id="L84"><a href="#L84">84</a></th><td>;;</td></tr><tr><th id="L85"><a href="#L85">85</a></th><td></td></tr><tr><th id="L86"><a href="#L86">86</a></th><td>;;; Change Log:</td></tr><tr><th id="L87"><a href="#L87">87</a></th><td></td></tr><tr><th id="L88"><a href="#L88">88</a></th><td>;; 2008-03-14:</td></tr><tr><th id="L89"><a href="#L89">89</a></th><td>;;  * fixed a typo: s/activitiy/avtivity/</td></tr><tr><th id="L90"><a href="#L90">90</a></th><td>;;</td></tr><tr><th id="L91"><a href="#L91">91</a></th><td>;; 2008-02-22:</td></tr><tr><th id="L92"><a href="#L92">92</a></th><td>;;  * fixed a bug: auto-saving didn't work under unreasonable situation...</td></tr><tr><th id="L93"><a href="#L93">93</a></th><td>;;    (Thanks to typester)</td></tr><tr><th id="L94"><a href="#L94">94</a></th><td>;;</td></tr><tr><th id="L95"><a href="#L95">95</a></th><td>;; 2008-02-19:</td></tr><tr><th id="L96"><a href="#L96">96</a></th><td>;;  * added git support.</td></tr><tr><th id="L97"><a href="#L97">97</a></th><td>;;  * fixed a bug: this package didn't work with SVN and CVS if</td></tr><tr><th id="L98"><a href="#L98">98</a></th><td>;;    use-svk-flag is non-nil.</td></tr><tr><th id="L99"><a href="#L99">99</a></th><td>;;</td></tr><tr><th id="L100"><a href="#L100">100</a></th><td>;; 2007-12-10:</td></tr><tr><th id="L101"><a href="#L101">101</a></th><td>;;  * added a command, `auto-save-buffers-enhanced-reload-svk'.</td></tr><tr><th id="L102"><a href="#L102">102</a></th><td>;;    (Thanks to typester: http://unknownplace.org/memo/2007/12/10#e001)</td></tr><tr><th id="L103"><a href="#L103">103</a></th><td>;;</td></tr><tr><th id="L104"><a href="#L104">104</a></th><td>;; 2007-10-18:</td></tr><tr><th id="L105"><a href="#L105">105</a></th><td>;;  * initial release</td></tr><tr><th id="L106"><a href="#L106">106</a></th><td></td></tr><tr><th id="L107"><a href="#L107">107</a></th><td>;;; Code:</td></tr><tr><th id="L108"><a href="#L108">108</a></th><td></td></tr><tr><th id="L109"><a href="#L109">109</a></th><td>;;;; You can customize auto-save-buffers-enhanced via the variables below</td></tr><tr><th id="L110"><a href="#L110">110</a></th><td>;;;; -------------------------------------------------------------------------</td></tr><tr><th id="L111"><a href="#L111">111</a></th><td></td></tr><tr><th id="L112"><a href="#L112">112</a></th><td>(defvar auto-save-buffers-enhanced-interval 0.5</td></tr><tr><th id="L113"><a href="#L113">113</a></th><td>  "*Interval by the second.</td></tr><tr><th id="L114"><a href="#L114">114</a></th><td></td></tr><tr><th id="L115"><a href="#L115">115</a></th><td>For that time, `auto-save-buffers-enhanced-save-buffers' is in</td></tr><tr><th id="L116"><a href="#L116">116</a></th><td>idle")</td></tr><tr><th id="L117"><a href="#L117">117</a></th><td></td></tr><tr><th id="L118"><a href="#L118">118</a></th><td>(defvar auto-save-buffers-enhanced-include-regexps '(".+")</td></tr><tr><th id="L119"><a href="#L119">119</a></th><td>  "*List that contains regexps which match `buffer-file-name' to</td></tr><tr><th id="L120"><a href="#L120">120</a></th><td>be auto-saved.")</td></tr><tr><th id="L121"><a href="#L121">121</a></th><td></td></tr><tr><th id="L122"><a href="#L122">122</a></th><td>(defvar auto-save-buffers-enhanced-exclude-regexps nil</td></tr><tr><th id="L123"><a href="#L123">123</a></th><td>  "*List that contains regexps which match `buffer-file-name' not</td></tr><tr><th id="L124"><a href="#L124">124</a></th><td>to be auto-saved.")</td></tr><tr><th id="L125"><a href="#L125">125</a></th><td></td></tr><tr><th id="L126"><a href="#L126">126</a></th><td>(defvar auto-save-buffers-enhanced-use-svk-flag nil</td></tr><tr><th id="L127"><a href="#L127">127</a></th><td>  "*If non-nil, `auto-save-buffers-enhanced' recognizes you're using svk</td></tr><tr><th id="L128"><a href="#L128">128</a></th><td>not CVS or Subversion.")</td></tr><tr><th id="L129"><a href="#L129">129</a></th><td></td></tr><tr><th id="L130"><a href="#L130">130</a></th><td>(defvar auto-save-buffers-enhanced-svk-config-path "~/.svk/config"</td></tr><tr><th id="L131"><a href="#L131">131</a></th><td>  "*Path of the config file of svk, which is usually located in</td></tr><tr><th id="L132"><a href="#L132">132</a></th><td>~/.svk/config.")</td></tr><tr><th id="L133"><a href="#L133">133</a></th><td></td></tr><tr><th id="L134"><a href="#L134">134</a></th><td>;;;; Imprementation Starts from Here...</td></tr><tr><th id="L135"><a href="#L135">135</a></th><td>;;;; -------------------------------------------------------------------------</td></tr><tr><th id="L136"><a href="#L136">136</a></th><td></td></tr><tr><th id="L137"><a href="#L137">137</a></th><td>(eval-when-compile</td></tr><tr><th id="L138"><a href="#L138">138</a></th><td> (require 'cl))</td></tr><tr><th id="L139"><a href="#L139">139</a></th><td></td></tr><tr><th id="L140"><a href="#L140">140</a></th><td>(defvar auto-save-buffers-enhanced-activity-flag t</td></tr><tr><th id="L141"><a href="#L141">141</a></th><td>  "*If non-nil, `auto-save-buffers-enhanced' saves buffers.")</td></tr><tr><th id="L142"><a href="#L142">142</a></th><td></td></tr><tr><th id="L143"><a href="#L143">143</a></th><td>(defun auto-save-buffers-enhanced (flag)</td></tr><tr><th id="L144"><a href="#L144">144</a></th><td>  "If `flag' is non-nil, activate `auto-save-buffers-enhanced' and start</td></tr><tr><th id="L145"><a href="#L145">145</a></th><td>auto-saving."</td></tr><tr><th id="L146"><a href="#L146">146</a></th><td>  (when flag</td></tr><tr><th id="L147"><a href="#L147">147</a></th><td>    (run-with-idle-timer</td></tr><tr><th id="L148"><a href="#L148">148</a></th><td>     auto-save-buffers-enhanced-interval t 'auto-save-buffers-enhanced-save-buffers)))</td></tr><tr><th id="L149"><a href="#L149">149</a></th><td></td></tr><tr><th id="L150"><a href="#L150">150</a></th><td>(defun auto-save-buffers-enhanced-include-only-checkout-path (flag)</td></tr><tr><th id="L151"><a href="#L151">151</a></th><td>  "If `flag' is non-nil, `auto-save-buffers-enhanced' saves only</td></tr><tr><th id="L152"><a href="#L152">152</a></th><td>the directories under VCS."</td></tr><tr><th id="L153"><a href="#L153">153</a></th><td>  (when flag</td></tr><tr><th id="L154"><a href="#L154">154</a></th><td>    (progn</td></tr><tr><th id="L155"><a href="#L155">155</a></th><td>      (setq auto-save-buffers-enhanced-include-regexps nil)</td></tr><tr><th id="L156"><a href="#L156">156</a></th><td>      (when auto-save-buffers-enhanced-use-svk-flag</td></tr><tr><th id="L157"><a href="#L157">157</a></th><td>        (auto-save-buffers-enhanced-add-svk-checkout-path-into-include-regexps))</td></tr><tr><th id="L158"><a href="#L158">158</a></th><td>      (add-hook 'find-file-hook</td></tr><tr><th id="L159"><a href="#L159">159</a></th><td>                'auto-save-buffers-enhanced-add-checkout-path-into-include-regexps))))</td></tr><tr><th id="L160"><a href="#L160">160</a></th><td></td></tr><tr><th id="L161"><a href="#L161">161</a></th><td>;;;; Command</td></tr><tr><th id="L162"><a href="#L162">162</a></th><td>;;;; -------------------------------------------------------------------------</td></tr><tr><th id="L163"><a href="#L163">163</a></th><td></td></tr><tr><th id="L164"><a href="#L164">164</a></th><td>(defun auto-save-buffers-enhanced-toggle-activity ()</td></tr><tr><th id="L165"><a href="#L165">165</a></th><td>  "Toggle `auto-save-buffers-enhanced' activity"</td></tr><tr><th id="L166"><a href="#L166">166</a></th><td>  (interactive)</td></tr><tr><th id="L167"><a href="#L167">167</a></th><td>  (if auto-save-buffers-enhanced-activity-flag</td></tr><tr><th id="L168"><a href="#L168">168</a></th><td>      (setq auto-save-buffers-enhanced-activity-flag nil)</td></tr><tr><th id="L169"><a href="#L169">169</a></th><td>    (setq auto-save-buffers-enhanced-activity-flag t))</td></tr><tr><th id="L170"><a href="#L170">170</a></th><td>  (if auto-save-buffers-enhanced-activity-flag</td></tr><tr><th id="L171"><a href="#L171">171</a></th><td>      (message "auto-save-buffers-enhanced on")</td></tr><tr><th id="L172"><a href="#L172">172</a></th><td>    (message "auto-save-buffers-enhanced off")))</td></tr><tr><th id="L173"><a href="#L173">173</a></th><td></td></tr><tr><th id="L174"><a href="#L174">174</a></th><td>(defun auto-save-buffers-enhanced-reload-svk ()</td></tr><tr><th id="L175"><a href="#L175">175</a></th><td>  "Reload the checkout paths from SVK configuration file."</td></tr><tr><th id="L176"><a href="#L176">176</a></th><td>  (interactive)</td></tr><tr><th id="L177"><a href="#L177">177</a></th><td>  (auto-save-buffers-enhanced-add-svk-checkout-path-into-include-regexps)</td></tr><tr><th id="L178"><a href="#L178">178</a></th><td>  (message (format "Realoaded checkout paths from %s" auto-save-buffers-enhanced-svk-config-path)))</td></tr><tr><th id="L179"><a href="#L179">179</a></th><td></td></tr><tr><th id="L180"><a href="#L180">180</a></th><td>;;;; Main Function</td></tr><tr><th id="L181"><a href="#L181">181</a></th><td>;;;; -------------------------------------------------------------------------</td></tr><tr><th id="L182"><a href="#L182">182</a></th><td></td></tr><tr><th id="L183"><a href="#L183">183</a></th><td>(defun auto-save-buffers-enhanced-save-buffers ()</td></tr><tr><th id="L184"><a href="#L184">184</a></th><td>  "Save buffers if `buffer-file-name' matches one of</td></tr><tr><th id="L185"><a href="#L185">185</a></th><td>`auto-save-buffers-enhanced-include-regexps' and doesn't match</td></tr><tr><th id="L186"><a href="#L186">186</a></th><td>`auto-save-buffers-enhanced-exclude-regexps'."</td></tr><tr><th id="L187"><a href="#L187">187</a></th><td>  (save-current-buffer</td></tr><tr><th id="L188"><a href="#L188">188</a></th><td>    (dolist (buffer (buffer-list))</td></tr><tr><th id="L189"><a href="#L189">189</a></th><td>      (set-buffer buffer)</td></tr><tr><th id="L190"><a href="#L190">190</a></th><td>      (if (and buffer-file-name</td></tr><tr><th id="L191"><a href="#L191">191</a></th><td>               auto-save-buffers-enhanced-activity-flag</td></tr><tr><th id="L192"><a href="#L192">192</a></th><td>               (buffer-modified-p)</td></tr><tr><th id="L193"><a href="#L193">193</a></th><td>               (not buffer-read-only)</td></tr><tr><th id="L194"><a href="#L194">194</a></th><td>               (auto-save-buffers-enhanced-regexps-match-p</td></tr><tr><th id="L195"><a href="#L195">195</a></th><td>                auto-save-buffers-enhanced-include-regexps buffer-file-name)</td></tr><tr><th id="L196"><a href="#L196">196</a></th><td>               (not (auto-save-buffers-enhanced-regexps-match-p</td></tr><tr><th id="L197"><a href="#L197">197</a></th><td>                     auto-save-buffers-enhanced-exclude-regexps buffer-file-name))</td></tr><tr><th id="L198"><a href="#L198">198</a></th><td>               (file-writable-p buffer-file-name))</td></tr><tr><th id="L199"><a href="#L199">199</a></th><td>          (save-buffer)))))</td></tr><tr><th id="L200"><a href="#L200">200</a></th><td></td></tr><tr><th id="L201"><a href="#L201">201</a></th><td>;;;; Internal Functions</td></tr><tr><th id="L202"><a href="#L202">202</a></th><td>;;;; -------------------------------------------------------------------------</td></tr><tr><th id="L203"><a href="#L203">203</a></th><td></td></tr><tr><th id="L204"><a href="#L204">204</a></th><td>(defun auto-save-buffers-enhanced-regexps-match-p (regexps string)</td></tr><tr><th id="L205"><a href="#L205">205</a></th><td>  (catch 'matched</td></tr><tr><th id="L206"><a href="#L206">206</a></th><td>    (dolist (regexp regexps)</td></tr><tr><th id="L207"><a href="#L207">207</a></th><td>      (if (string-match regexp string)</td></tr><tr><th id="L208"><a href="#L208">208</a></th><td>          (throw 'matched t)))))</td></tr><tr><th id="L209"><a href="#L209">209</a></th><td></td></tr><tr><th id="L210"><a href="#L210">210</a></th><td>(defun auto-save-buffers-enhanced-add-svk-checkout-path-into-include-regexps ()</td></tr><tr><th id="L211"><a href="#L211">211</a></th><td>  (save-current-buffer</td></tr><tr><th id="L212"><a href="#L212">212</a></th><td>    (find-file auto-save-buffers-enhanced-svk-config-path)</td></tr><tr><th id="L213"><a href="#L213">213</a></th><td>    (when (file-readable-p buffer-file-name)</td></tr><tr><th id="L214"><a href="#L214">214</a></th><td>      (toggle-read-only))</td></tr><tr><th id="L215"><a href="#L215">215</a></th><td>    (goto-char (point-min))</td></tr><tr><th id="L216"><a href="#L216">216</a></th><td>    (while (re-search-forward "^[\t ]+\\(\\(/[^\n]+\\)+\\):[ ]*$" nil t)</td></tr><tr><th id="L217"><a href="#L217">217</a></th><td>      (when (and (file-exists-p (match-string 1))</td></tr><tr><th id="L218"><a href="#L218">218</a></th><td>                 (not (memq (match-string 1) auto-save-buffers-enhanced-include-regexps)))</td></tr><tr><th id="L219"><a href="#L219">219</a></th><td>        (setq auto-save-buffers-enhanced-include-regexps</td></tr><tr><th id="L220"><a href="#L220">220</a></th><td>              (cons (concat "^" (regexp-quote (match-string 1)))</td></tr><tr><th id="L221"><a href="#L221">221</a></th><td>                    auto-save-buffers-enhanced-include-regexps))))</td></tr><tr><th id="L222"><a href="#L222">222</a></th><td>    (kill-buffer (current-buffer))))</td></tr><tr><th id="L223"><a href="#L223">223</a></th><td></td></tr><tr><th id="L224"><a href="#L224">224</a></th><td>(defun auto-save-buffers-enhanced-add-checkout-path-into-include-regexps ()</td></tr><tr><th id="L225"><a href="#L225">225</a></th><td>  (let ((current-dir default-directory)</td></tr><tr><th id="L226"><a href="#L226">226</a></th><td>        (checkout-path nil))</td></tr><tr><th id="L227"><a href="#L227">227</a></th><td>    (catch 'root</td></tr><tr><th id="L228"><a href="#L228">228</a></th><td>      (while t</td></tr><tr><th id="L229"><a href="#L229">229</a></th><td>        (if (or (file-exists-p ".svn")</td></tr><tr><th id="L230"><a href="#L230">230</a></th><td>                (file-exists-p ".cvs")</td></tr><tr><th id="L231"><a href="#L231">231</a></th><td>                (file-exists-p ".git"))</td></tr><tr><th id="L232"><a href="#L232">232</a></th><td>            (setq checkout-path (expand-file-name default-directory)))</td></tr><tr><th id="L233"><a href="#L233">233</a></th><td>        (cd "..")</td></tr><tr><th id="L234"><a href="#L234">234</a></th><td>        (when (equal "/" default-directory)</td></tr><tr><th id="L235"><a href="#L235">235</a></th><td>            (throw 'root t))))</td></tr><tr><th id="L236"><a href="#L236">236</a></th><td>    (when (and checkout-path</td></tr><tr><th id="L237"><a href="#L237">237</a></th><td>               (not (memq checkout-path auto-save-buffers-enhanced-include-regexps)))</td></tr><tr><th id="L238"><a href="#L238">238</a></th><td>      (setq auto-save-buffers-enhanced-include-regexps</td></tr><tr><th id="L239"><a href="#L239">239</a></th><td>            (cons (concat "^" (regexp-quote checkout-path))</td></tr><tr><th id="L240"><a href="#L240">240</a></th><td>                  auto-save-buffers-enhanced-include-regexps)))</td></tr><tr><th id="L241"><a href="#L241">241</a></th><td>    (cd current-dir)))</td></tr><tr><th id="L242"><a href="#L242">242</a></th><td></td></tr><tr><th id="L243"><a href="#L243">243</a></th><td>(provide 'auto-save-buffers-enhanced)</td></tr><tr><th id="L244"><a href="#L244">244</a></th><td></td></tr><tr><th id="L245"><a href="#L245">245</a></th><td>;;; auto-save-buffers-enhanced.el ends here</td></tr></tbody></table>
-      </div>
-      <div id="help">
-        <strong>Note:</strong> See <a href="/share/wiki/TracBrowser">TracBrowser</a>
-        for help on using the browser.
-      </div>
-      <div id="anydiff">
-        <form action="/share/diff" method="get">
-          <div class="buttons">
-            <input type="hidden" name="new_path" value="/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" />
-            <input type="hidden" name="old_path" value="/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" />
-            <input type="hidden" name="new_rev" value="7957" />
-            <input type="hidden" name="old_rev" value="7957" />
-            <input type="submit" value="View changes..." title="Select paths and revs for Diff" />
-          </div>
-        </form>
-      </div>
-    </div>
-    <div id="altlinks">
-      <h3>Download in other formats:</h3>
-      <ul>
-        <li class="first">
-          <a rel="nofollow" href="/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el?format=txt">Plain Text</a>
-        </li><li class="last">
-          <a rel="nofollow" href="/share/export/35203/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el">Original Format</a>
-        </li>
-      </ul>
-    </div>
-    </div>
-    <div id="footer" lang="en" xml:lang="en"><hr />
-      <a id="tracpowered" href="http://trac.edgewall.org/"><img src="/share/chrome/common/trac_logo_mini.png" height="30" width="107" alt="Trac Powered" /></a>
-      <p class="left">
-        Powered by <a href="/share/about"><strong>Trac 0.11</strong></a><br />
-        By <a href="http://www.edgewall.org/">Edgewall Software</a>.
-      </p>
-      <p class="right">Visit the Trac open source project at<br /><a href="http://trac.edgewall.org/">http://trac.edgewall.org/</a></p>
-    </div>
-  </body>
-</html>
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+
+;; * Description
+;;
+;; Emacs's native auto-save feature simply
+;; sucks. auto-save-buffers-enhanced.el provides such and other more
+;; useful features which only require a few configurations to set up.
+;;
+;; auto-save-buffers-enhanced.el borrows main ideas and some codes
+;; written by Satoru Takabayashi and enhances the original one. Thanks
+;; a lot!!!
+;;
+;; See http://0xcc.net/misc/auto-save/
+;;
+;; * Usage
+;;
+;; Just simply put the code below into your .emacs:
+;;
+;;   (require 'auto-save-buffers-enhanced)
+;;   (auto-save-buffers-enhanced t)
+;;
+;; You can explicitly set what kind of files should or should not be
+;; auto-saved. Pass a list of regexps like below:
+;;
+;;   (setq auto-save-buffers-enhanced-include-regexps '(".+"))
+;;   (setq auto-save-buffers-enhanced-exclude-regexps '("^not-save-file" "\\.ignore$"))
+;;
+;; If you want `auto-save-buffers-enhanced' to work only with the files under
+;; the directories checked out from VCS such as CVS, Subversion, and
+;; svk, put the code below into your .emacs:
+;;
+;;   ;; If you're using CVS or Subversion or git
+;;   (require 'auto-save-buffers-enhanced)
+;;   (auto-save-buffers-enhanced-include-only-checkout-path t)
+;;   (auto-save-buffers-enhanced t)
+;;
+;;   ;; If you're using also svk
+;;   (require 'auto-save-buffers-enhanced)
+;;   (setq auto-save-buffers-enhanced-use-svk-flag t)
+;;   (auto-save-buffers-enhanced-include-only-checkout-path t)
+;;   (auto-save-buffers-enhanced t)
+;;
+;; You can toggle `auto-save-buffers-enhanced' activity to execute
+;; `auto-save-buffers-enhanced-toggle-activity'. For convinience, you
+;; might want to set keyboard shortcut of the command like below:
+;;
+;;   (global-set-key "\C-xas" 'auto-save-buffers-enhanced-toggle-activity)
+;;
+;; Make sure that you must reload the SVK checkout paths from your
+;; configuration file such as `~/.svk/config', in which SVK stores the
+;; information on checkout paths, by executing
+;; `auto-save-buffers-reload-svk' after you check new files out from
+;; your local repository. You can set a keyboard shortcut for it like
+;; below:
+;;
+;;   (global-set-key "\C-xar" 'auto-save-buffers-enhanced-reload-svk)
+;;
+;; For more details about customizing, see the section below:
+;;
+
+;;; Change Log:
+
+;; 2008-03-14:
+;;  * fixed a typo: s/activitiy/avtivity/
+;;
+;; 2008-02-22:
+;;  * fixed a bug: auto-saving didn't work under unreasonable situation...
+;;    (Thanks to typester)
+;;
+;; 2008-02-19:
+;;  * added git support.
+;;  * fixed a bug: this package didn't work with SVN and CVS if
+;;    use-svk-flag is non-nil.
+;;
+;; 2007-12-10:
+;;  * added a command, `auto-save-buffers-enhanced-reload-svk'.
+;;    (Thanks to typester: http://unknownplace.org/memo/2007/12/10#e001)
+;;
+;; 2007-10-18:
+;;  * initial release
+
+;;; Code:
+
+;;;; You can customize auto-save-buffers-enhanced via the variables below
+;;;; -------------------------------------------------------------------------
+
+(defvar auto-save-buffers-enhanced-interval 0.5
+  "*Interval by the second.
+
+For that time, `auto-save-buffers-enhanced-save-buffers' is in
+idle")
+
+(defvar auto-save-buffers-enhanced-include-regexps '(".+")
+  "*List that contains regexps which match `buffer-file-name' to
+be auto-saved.")
+
+(defvar auto-save-buffers-enhanced-exclude-regexps nil
+  "*List that contains regexps which match `buffer-file-name' not
+to be auto-saved.")
+
+(defvar auto-save-buffers-enhanced-use-svk-flag nil
+  "*If non-nil, `auto-save-buffers-enhanced' recognizes you're using svk
+not CVS or Subversion.")
+
+(defvar auto-save-buffers-enhanced-svk-config-path "~/.svk/config"
+  "*Path of the config file of svk, which is usually located in
+~/.svk/config.")
+
+;;;; Imprementation Starts from Here...
+;;;; -------------------------------------------------------------------------
+
+(eval-when-compile
+ (require 'cl))
+
+(defvar auto-save-buffers-enhanced-activity-flag t
+  "*If non-nil, `auto-save-buffers-enhanced' saves buffers.")
+
+(defun auto-save-buffers-enhanced (flag)
+  "If `flag' is non-nil, activate `auto-save-buffers-enhanced' and start
+auto-saving."
+  (when flag
+    (run-with-idle-timer
+     auto-save-buffers-enhanced-interval t 'auto-save-buffers-enhanced-save-buffers)))
+
+(defun auto-save-buffers-enhanced-include-only-checkout-path (flag)
+  "If `flag' is non-nil, `auto-save-buffers-enhanced' saves only
+the directories under VCS."
+  (when flag
+    (progn
+      (setq auto-save-buffers-enhanced-include-regexps nil)
+      (when auto-save-buffers-enhanced-use-svk-flag
+        (auto-save-buffers-enhanced-add-svk-checkout-path-into-include-regexps))
+      (add-hook 'find-file-hook
+                'auto-save-buffers-enhanced-add-checkout-path-into-include-regexps))))
+
+;;;; Command
+;;;; -------------------------------------------------------------------------
+
+(defun auto-save-buffers-enhanced-toggle-activity ()
+  "Toggle `auto-save-buffers-enhanced' activity"
+  (interactive)
+  (if auto-save-buffers-enhanced-activity-flag
+      (setq auto-save-buffers-enhanced-activity-flag nil)
+    (setq auto-save-buffers-enhanced-activity-flag t))
+  (if auto-save-buffers-enhanced-activity-flag
+      (message "auto-save-buffers-enhanced on")
+    (message "auto-save-buffers-enhanced off")))
+
+(defun auto-save-buffers-enhanced-reload-svk ()
+  "Reload the checkout paths from SVK configuration file."
+  (interactive)
+  (auto-save-buffers-enhanced-add-svk-checkout-path-into-include-regexps)
+  (message (format "Realoaded checkout paths from %s" auto-save-buffers-enhanced-svk-config-path)))
+
+;;;; Main Function
+;;;; -------------------------------------------------------------------------
+
+(defun auto-save-buffers-enhanced-save-buffers ()
+  "Save buffers if `buffer-file-name' matches one of
+`auto-save-buffers-enhanced-include-regexps' and doesn't match
+`auto-save-buffers-enhanced-exclude-regexps'."
+  (save-current-buffer
+    (dolist (buffer (buffer-list))
+      (set-buffer buffer)
+      (if (and buffer-file-name
+               auto-save-buffers-enhanced-activity-flag
+               (buffer-modified-p)
+               (not buffer-read-only)
+               (auto-save-buffers-enhanced-regexps-match-p
+                auto-save-buffers-enhanced-include-regexps buffer-file-name)
+               (not (auto-save-buffers-enhanced-regexps-match-p
+                     auto-save-buffers-enhanced-exclude-regexps buffer-file-name))
+               (file-writable-p buffer-file-name))
+          (save-buffer)))))
+
+;;;; Internal Functions
+;;;; -------------------------------------------------------------------------
+
+(defun auto-save-buffers-enhanced-regexps-match-p (regexps string)
+  (catch 'matched
+    (dolist (regexp regexps)
+      (if (string-match regexp string)
+          (throw 'matched t)))))
+
+(defun auto-save-buffers-enhanced-add-svk-checkout-path-into-include-regexps ()
+  (save-current-buffer
+    (find-file auto-save-buffers-enhanced-svk-config-path)
+    (when (file-readable-p buffer-file-name)
+      (toggle-read-only))
+    (goto-char (point-min))
+    (while (re-search-forward "^[\t ]+\\(\\(/[^\n]+\\)+\\):[ ]*$" nil t)
+      (when (and (file-exists-p (match-string 1))
+                 (not (memq (match-string 1) auto-save-buffers-enhanced-include-regexps)))
+        (setq auto-save-buffers-enhanced-include-regexps
+              (cons (concat "^" (regexp-quote (match-string 1)))
+                    auto-save-buffers-enhanced-include-regexps))))
+    (kill-buffer (current-buffer))))
+
+(defun auto-save-buffers-enhanced-add-checkout-path-into-include-regexps ()
+  (let ((current-dir default-directory)
+        (checkout-path nil))
+    (catch 'root
+      (while t
+        (if (or (file-exists-p ".svn")
+                (file-exists-p ".cvs")
+                (file-exists-p ".git"))
+            (setq checkout-path (expand-file-name default-directory)))
+        (cd "..")
+        (when (equal "/" default-directory)
+            (throw 'root t))))
+    (when (and checkout-path
+               (not (memq checkout-path auto-save-buffers-enhanced-include-regexps)))
+      (setq auto-save-buffers-enhanced-include-regexps
+            (cons (concat "^" (regexp-quote checkout-path))
+                  auto-save-buffers-enhanced-include-regexps)))
+    (cd current-dir)))
+
+(provide 'auto-save-buffers-enhanced)
+
+;;; auto-save-buffers-enhanced.el ends here

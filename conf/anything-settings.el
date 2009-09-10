@@ -32,12 +32,16 @@
   (require 'anything-config)
   (require 'anything-match-plugin)
 
-  ;; (install-elisp-from-emacswiki "ac-anything.el")
+  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/ac-anything.el")
   (require 'ac-anything)
   (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-anything)
 
   (when (featurep 'yasnippet)
-    ;; (install-elisp "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
+
+
+
+
+    ;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
     (require 'anything-c-yasnippet)
     (setq anything-c-yas-space-match-any-greedy t) ;スペース区切りで絞り込めるようにする デフォルトは nil
     (global-set-key (kbd "C-c y") 'anything-c-yas-complete))

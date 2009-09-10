@@ -254,6 +254,9 @@
 
 
 
+(eval-when-compile
+  (require 'cl))
+
 (defgroup auto-complete nil
   "Auto completion"
   :group 'convenience
@@ -642,8 +645,8 @@ that have been made before in this function."
      (nthcdr ac-menu-scroll ac-candidates))
     ;; If only one candidate is remaining,
     ;; make the candidate menu disappeared.
-    (if (eq (- (length ac-candidates) ac-menu-scroll) 1)
-        (ac-menu-hide-line ac-menu ac-menu-offset))
+    ;(if (eq (- (length ac-candidates) ac-menu-scroll) 1)
+    ;    (ac-menu-hide-line ac-menu ac-menu-offset))
     ;; Ensure lines visible
     (if (and (> ac-menu-direction 0)
              (> i (-
@@ -754,14 +757,15 @@ that have been made before in this function."
 
 (defun ac-adaptive-candidate-filter (candidates)
   "Filter candidates according to length and history (not yet)."
-  (if (> (length candidates) 1)
-      (let ((length (length ac-prefix)))
-        (delq nil
-              (mapcar (lambda (candidate)
-                        (if (> (- (length candidate) length) 2)
-                            candidate))
-                      candidates)))
-    candidates))
+  ;(if (> (length candidates) 1)
+  ;    (let ((length (length ac-prefix)))
+  ;      (delq nil
+  ;            (mapcar (lambda (candidate)
+  ;                      (if (> (- (length candidate) length) 2)
+  ;                          candidate))
+  ;                    candidates)))
+  ;  candidates)
+  candidates)
 
 (defun ac-trigger-command-p ()
   "Return non-nil if `this-command' is a trigger command."
@@ -896,7 +900,6 @@ use SOURCES as `ac-sources'.")
 
 (defun ac-sources-init ()
   "Implementation for `ac-init-function' by sources."
-  (or ac-current-sources (setq ac-current-sources ac-sources))
   (dolist (source ac-current-sources)
     (let ((init-function (ac-get-source-property 'init source)))
       (if init-function
@@ -911,7 +914,7 @@ use SOURCES as `ac-sources'.")
   "Implemention for `ac-prefix-function' by sources."
   (let (point)
     (dolist (pair ac-omni-completion-sources)
-      (when (looking-back (car pair))
+      (when (looking-back (car pair) nil t)
         (setq ac-current-sources (cdr pair))
         (setq ac-sources-omni-completion t)
         (setq ac-completing t)
@@ -1044,7 +1047,9 @@ use SOURCES as `ac-sources'.")
 (defvar ac-source-abbrev
   `((candidates
      . (lambda ()
-         (all-completions ac-prefix local-abbrev-table)))
+         (append
+          (all-completions ac-prefix global-abbrev-table)
+          (all-completions ac-prefix local-abbrev-table))))
     (action
      . expand-abbrev))
   "Source for abbrev.")
