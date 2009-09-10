@@ -35,7 +35,7 @@
   (load-library "anthy")
   (setq default-input-method "japanese-anthy"))
 
-(cond (windows-p
+(cond ((and windows-p window-system)
        (setup-input-method-ime))
       (carbon-p                  ; no setting
        t)

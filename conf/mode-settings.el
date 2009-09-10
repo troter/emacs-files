@@ -98,9 +98,9 @@
 
 ;;====================
 ;; yasnipet
-(when (require 'yasnippet-bundle nil t)
-  (yas/initialize)
-  (yas/load-directory "~/.elisp/yasnippet/snippets"))
+;(when (require 'yasnippet-bundle nil t)
+;  (yas/initialize)
+;  (yas/load-directory "~/.elisp/yasnippet/snippets"))
 
 ;;====================
 ;; migemo

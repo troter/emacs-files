@@ -58,6 +58,7 @@
     ","))
   (set-default-font "fontset-mplus_12r"))
 
+(when window-system
 (cond (windows-p
        (setup-font-windows))
       (t
@@ -66,7 +67,7 @@
                                         ;      (setup-font-others-window-system))
              (t
               (setup-font-others)))))
-
+)
 ;;; Color settings.
 ;;; ---------------
 (global-font-lock-mode t)               ; font lock !!

@@ -53,12 +53,12 @@
 
 
 ;; directory
-(defconst install-elisp-directory "~/.emacs.d/plugins")
+(defconst elisp-directory "~/.emacs.d/plugins")
 
 ;;; Path settings.
 ;;; ===================
 (add-to-list 'load-path "~/.emacs.d/conf")
-(add-to-list 'load-path install-elisp-directory)
+(add-to-list 'load-path elisp-directory)
 
 ;;; Loading.
 ;;; ========
@@ -78,7 +78,7 @@
 (load "dired-settings.el")
 (load "term-settings.el")
 (load "mode-settings.el")
-(load "anything-settings.el")
+;(load "anything-settings.el")
 
 ;;; Key binding configuration.
 ;;; ==========================

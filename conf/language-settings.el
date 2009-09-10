@@ -29,6 +29,7 @@
 
 ;; 文脈依存な文字幅問題を解決
 ;; http://www.pqrs.org/tekezo/emacs/doc/wide-character/index.html
+(when (functionp 'utf-translate-cjk-set-unicode-range)
 (utf-translate-cjk-set-unicode-range
  '((#x00a2 . #x00a3)                    ; ¢, £
    (#x00a7 . #x00a8)                    ; §, ¨
@@ -49,5 +50,5 @@
    (#x25A0 . #x25FF)                    ; Geometric Shapes
    (#x2600 . #x26FF)                    ; Miscellaneous Symbols
    (#x2e80 . #xd7a3) (#xff00 . #xffef)))
-
+)
 ;;; language-settings.el ends here
