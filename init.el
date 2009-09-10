@@ -2,8 +2,8 @@
 ;;; My emacs.el.
 ;;; ============
 
-;;; utilitys 
-;;; ========
+;; Common Lisp extensions for Emacs.
+(require 'cl)
 
 ;; refer: http://d.hatena.ne.jp/tomoya/20090807/1249601308
 (defun x->bool (elt) (not (not elt)))
