@@ -1,13 +1,12 @@
 # -*- coding:utf-8; mode:ruby -*-
 # Rakefile for my emacs configration.
-
 begin; require 'rubygem'; rescue LoadError; end
-
-require 'pp'
 
 require 'rake'
 require 'rake/clean'
 require 'find'
+
+require 'pp'
 
 task :default => [:update]
 
@@ -16,23 +15,27 @@ task :update => [:plugins]
 
 EMACS_CONFIGS = FileList["conf/*.el"]
 ELISP_INSTALL_DIR = "plugins"
-EMACS_BATCH = "emacs --batch -no-init-file -no-site-file"
+EMACS = "emacs-nox"
+EMACS_BATCH = "#{EMACS} --batch -no-init-file -no-site-file"
 
 def auto_install(datasource, package)
   sh <<EOS
 #{EMACS_BATCH} --directory #{ELISP_INSTALL_DIR} \
---eval "(require 'auto-install)" \
---eval "(setq install-elisp-confirm-flag nil)" \
---eval "(setq auto-install-directory (concat (car load-path) \\"/\\"))" \
---eval "(setq auto-install-save-confirm nil)" \
---eval "(setq auto-install-package-name-list nil)" \
---eval "(setq auto-install-install-confirm nil)" \
---eval "(auto-install-update-emacswiki-package-name nil)" \
---eval "(auto-install-#{datasource} \\"#{package}\\")" \
---eval "(sit-for 4)" \
---eval "(while auto-install-download-buffer-alist (sit-for 1) (print auto-install-download-buffer-alist))" \
---eval "(while auto-install-download-buffer (sit-for 1) (print auto-install-download-buffer))" \
---eval "(sit-for 4)"
+--eval "
+(progn
+  (require 'auto-install)
+  (require 'cl)
+  (setq auto-install-directory (concat (car load-path) \\"/\\")
+        auto-install-save-confirm nil
+        auto-install-package-name-list nil
+        auto-install-install-confirm nil)
+  (auto-install-#{datasource} \\"#{package}\\")
+  (while (reduce '(lambda (x y) (or x y))
+		 (mapcar '(lambda (b) (assoc 'auto-install-download-buffer
+                                             (buffer-local-variables b)))
+                         (buffer-list)))
+    (sit-for 1)))
+"
 EOS
 end
 

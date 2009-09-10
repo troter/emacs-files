@@ -2,8 +2,8 @@
 ;;; buffer-setting.el --- setup buffer utility
 
 ;; color-moccur
-;; (auto-install-from-emacswiki "color-moccur")
-;; (auto-install-from-emacswiki "moccur-edit")
+;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/color-moccur.el")
+;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/moccur-edit.el")
 (require 'color-moccur)
 (require 'moccur-edit)
 
@@ -97,7 +97,8 @@
                         (my-make-scratch 1)))))
 
 ;; Auto save buffers enhanced
-;; (auto-install-from-url "http://coderepos.org/share/browser/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
+
+;; (auto-install-from-url "http://coderepos.org/share/export/35308/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
 ;; (require 'auto-save-buffers-enhanced)
 ;; (auto-save-buffers-enhanced-include-only-checkout-path t)
 ;; (auto-save-buffers-enhanced t)

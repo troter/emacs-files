@@ -1,7 +1,7 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 ;;; buffer-setting.el ---
 
-;; (auto-install-from-emacswiki "auto-install")
+;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/auto-install.el")
 (require 'auto-install)
 (auto-install-update-emacswiki-package-name nil)
 (setq auto-install-directory install-elisp-directory)
