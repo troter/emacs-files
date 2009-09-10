@@ -15,7 +15,6 @@
          (append (flatten (car lis)) (flatten (cdr lis))))
         (t (append (list (car lis)) (flatten (cdr lis))))))
 
-
 ;; emacs-version predicates
 (dolist (ver '("22" "23" "23.0" "23.1" "23.2"))
   (set (intern (concat "emacs" ver "-p"))
@@ -115,10 +114,6 @@
 (load-directory-files libraries-directory "^.+el$")
 (load-directory-files conf-directory "^init.+el$")
 
-;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/auto-install.el")
-(require 'auto-install)
-(setq auto-install-directory elisp-directory)
-(auto-install-update-emacswiki-package-name nil)
 
 
 ;;; Loading.
