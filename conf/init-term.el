@@ -1,9 +1,4 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-;;; term-setting.el ---
-
-(setq elscreen-prefix-key "\C-z")
-(setq elscreen-display-tab nil)
-(load "elscreen" t)
 
 ;; term
 ;; ----
@@ -21,13 +16,3 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-hook 'comint-output-filter-functions
           'comint-watch-for-password-prompt)
-
-;; use zsh
-(when windows-p
-  ;; use cygwin zsh
-  (setq explicit-shell-file-name "zsh")
-  (setq shell-file-name "sh")
-  (setq shell-command-switch "-c")
-  (modify-coding-system-alist 'process ".*sh\\.exe" '(undecided-dos . euc-japan-unix)))
-
-;;; term-setting.el ends here

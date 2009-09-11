@@ -1,17 +1,4 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-;;; buffer-setting.el --- setup buffer utility
-
-;; color-moccur
-;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/color-moccur.el")
-;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/moccur-edit.el")
-(require 'color-moccur)
-(require 'moccur-edit)
-
-;; http://www.bookshelf.jp/soft/meadow_16.html#SEC155
-;; <Number>というsuffixを<Parent Directory>にする
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
-(setq uniquify-ignore-buffers-re "*[^*]+*")
 
 ;; iswitch buffers
 (iswitchb-mode 1)
@@ -61,14 +48,3 @@
                           (t
                            (concat "mode: " mode-name " Mode"))))))))
 
-;; protbuf
-;; (auto-install-from-url "http://www.splode.com/~friedman/software/emacs-lisp/src/protbuf.el")
-;; (require 'protbuf) 
-
-;; Auto save buffers enhanced
-;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/auto-save-buffers-enhanced/trunk/auto-save-buffers-enhanced.el" )
-;; (require 'auto-save-buffers-enhanced)
-;; (auto-save-buffers-enhanced-include-only-checkout-path t)
-;; (auto-save-buffers-enhanced t)
-
-;;; buffer-setting.el ends here

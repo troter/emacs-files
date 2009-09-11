@@ -1,5 +1,4 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-;;; dired-setting.el ---
 
 ;; wdired
 (require 'wdired)
@@ -31,5 +30,3 @@
   ad-do-it
   (setq dired-actual-switches
         (dired-replace-in-string "h" "" dired-actual-switches)))
-
-;;; dired-setting.el ends here

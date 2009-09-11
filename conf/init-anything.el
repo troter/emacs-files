@@ -1,31 +1,4 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-;;; anything-setting.el ---
-
-;(when (require 'yasnippet nil t)
-;  (yas/initialize)
-;  ;; snippetsのディレクトリを指定
-;  (yas/load-directory "~/.emacs.d/elisp/snippets/")
-;  (add-to-list 'yas/extra-mode-hooks 'ruby-mode-hook)
-;  (add-to-list 'yas/extra-mode-hooks 'cperl-mode-hook)
-;)
-
-;; (auto-install-batch "auto-complete development version")
-(when (require 'auto-complete nil t)
-  (global-auto-complete-mode t)
-  (add-hook 'ruby-mode-hook
-            (lambda ()
-              (when (require 'rcodetools nil t)
-                (require 'auto-complete-ruby)
-                (make-local-variable 'ac-omni-completion-sources)
-                (setq ac-omni-completion-sources
-                      '(("\\.\\=" . (ac-source-rcodetools)))))))
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (require 'auto-complete-emacs-lisp)
-                (make-local-variable 'ac-omni-completion-sources)
-                (setq ac-omni-completion-sources
-                      '(("\\.\\=" . (ac-source-emacs-lisp-features))))))
-)
 
 ;; (auto-install-batch "anything")
 (when (require 'anything nil t)
@@ -98,6 +71,3 @@
           anything-c-source-calculation-result
           ))
 )
-
-
-;;; anything-setting.el ends here

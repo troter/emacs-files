@@ -15,6 +15,24 @@
          (append (flatten (car lis)) (flatten (cdr lis))))
         (t (append (list (car lis)) (flatten (cdr lis))))))
 
+(defun fold-right (proc init lis)
+  (if lis
+      (funcall proc (car lis) (fold-right proc init (cdr lis))) init))
+ 
+(defun fold-left (proc init lis)
+  (if lis (fold-left proc (funcall proc init (car lis)) (cdr lis)) init))
+ 
+(defalias 'fold 'fold-left)
+
+(defun compose (&rest flist)
+  `(lambda (&rest args)
+     (dolist (f
+              '(,@(reverse flist))
+              (car args))
+       (setq args
+             (list (apply f args))))))
+
+
 ;; emacs-version predicates
 (dolist (ver '("22" "23" "23.0" "23.1" "23.2"))
   (set (intern (concat "emacs" ver "-p"))
@@ -25,6 +43,7 @@
 (setq darwin-p  (eq system-type 'darwin)
       ns-p      (eq window-system 'ns)
       carbon-p  (eq window-system 'mac)
+      bsd-p     (eq system-type 'berkeley-unix)
       linux-p   (eq system-type 'gnu/linux)
       colinux-p (when linux-p
                   (let ((file "/proc/modules"))
@@ -39,17 +58,6 @@
       nt-p      (eq system-type 'windows-nt)
       meadow-p  (featurep 'meadow)
       windows-p (or cygwin-p nt-p meadow-p))
-
-;; string utility
-(defun strings-join (strings &optional separator)
-  (if (and separator strings)
-      (let ((rs (list (car strings)))
-            (ss (cdr strings)))
-        (while ss
-          (setq rs (cons (car ss) (cons separator rs)))
-          (setq ss (cdr ss)))
-        (setq strings (reverse rs))))
-  (apply 'concat strings))
 
 (setq base-directory "~/.emacs.d"
       conf-directory (expand-file-name "conf" base-directory)
@@ -110,36 +118,16 @@
             (when (load file nil t)
               (message "`%s' loaded." file))) files)))
 
-
+; loading.
 (load-directory-files libraries-directory "^.+el$")
 (load-directory-files conf-directory "^init.+el$")
-
-
-
-;;; Loading.
-;;; ========
-
-;; basis
-(load "language-settings")
-(load "input-method-settings")
-(load "look-and-feel-settings")
-(load "misc-settings")
-(load "carbon-emacs-settings")
-(load "windows-settings")
-
-;; others
-(load "buffer-settings.el")
-(load "dired-settings.el")
-(load "term-settings.el")
-(load "mode-settings.el")
-;(load "anything-settings.el")
 
 ;;; Key binding configuration.
 ;;; ==========================
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
 (global-set-key [f1] 'help-for-help)
-(global-set-key "\C-h" 'backward-delete-char) ;;Ctrl-Hでバックスペース
-(global-set-key "\C-xp" (lambda () (interactive) (other-window -1)))
-(define-key global-map (kbd "C-;") 'anything)
+(global-set-key [(control h)] 'backward-delete-char) ;;Ctrl-Hでバックスペース
+(global-set-key [(control x) (p)] (lambda () (interactive) (other-window -1)))
+(global-set-key [(control \;)] 'anything)
 
 ;;; End of .emacs.el
