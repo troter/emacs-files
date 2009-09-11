@@ -9,7 +9,7 @@ require 'find'
 task :default => [:update]
 
 desc "Update files."
-task :update => [:plugins]
+task :update => [:plugins, :info]
 
 EMACS = "emacs-nox"
 EMACS_BATCH = "#{EMACS} --batch -no-init-file -no-site-file"
@@ -36,7 +36,7 @@ end
 
 task :plugins do
   install_dir = 'plugins'
-  FileList["conf/*.el"].map do |config|
+  FileList["conf/*.el"].each do |config|
     IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
       auto_install(datasource = $1, package = $2, install_dir)
     end
@@ -49,6 +49,13 @@ task :plugins do
     tar xzf #{yasnippet_url.pathmap('%f')}
     mv yasnippet-bundle.el #{install_dir}/
     rm  #{yasnippet_url.pathmap('%f')}
+  EOS
+end
+
+task :info do
+  sh <<-EOS
+    install-info Progmode --name=php-mode --description="Major mode for editing PHP code." \
+    --info-file=info/php-mode.info.gz --info-dir=info
   EOS
 end
 
