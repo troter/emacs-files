@@ -61,6 +61,7 @@
 
 (setq base-directory "~/.emacs.d"
       conf-directory (expand-file-name "conf" base-directory)
+      info-directory (expand-file-name "info" base-directory)
       plugins-directory (expand-file-name "plugins" base-directory)
       libraries-directory (expand-file-name "library" base-directory))
 
@@ -101,7 +102,8 @@
 (setq Info-additional-directory-list
       (merge-path-list
        nil
-       (list "/Applications/Emacs.app/Contents/Resources/info/"
+       (list info-directory
+             "/Applications/Emacs.app/Contents/Resources/info/"
              "/opt/local/share/info"
              "/usr/local/share/info/"
              "/usr/share/info/"
