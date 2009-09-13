@@ -65,6 +65,9 @@
       plugins-directory (expand-file-name "plugins" base-directory)
       libraries-directory (expand-file-name "library" base-directory))
 
+(defun load-path-recompile (dir)
+  (let (save-abbrevs) (byte-recompile-directory dir)))
+
 (defun merge-path-list (init lis)
   (fold-right (lambda (x y)
           (let ((expanded-name (expand-file-name x)))
@@ -79,6 +82,8 @@
        load-path
        (list plugins-directory 
              libraries-directory)))
+(load-path-recompile plugins-directory)
+(load-path-recompile libraries-directory)
 
 (setq exec-path
       (merge-path-list
