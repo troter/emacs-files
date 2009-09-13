@@ -7,7 +7,7 @@
 (global-set-key [(control h)] 'backward-delete-char)
 
 ;; M-p, M-n でバッファーの移動
-(global-set-key [(meta n)] (lambda () (interactive) (other-window)))
+(global-set-key [(meta n)] (lambda () (interactive) (other-window 1)))
 (global-set-key [(meta p)] (lambda () (interactive) (other-window -1)))
 
 ;; replacement for iswitchb.
