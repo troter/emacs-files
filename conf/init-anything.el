@@ -10,10 +10,6 @@
   (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-anything)
 
   (when (featurep 'yasnippet)
-
-
-
-
     ;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
     (require 'anything-c-yasnippet)
     (setq anything-c-yas-space-match-any-greedy t) ;スペース区切りで絞り込めるようにする デフォルトは nil
@@ -78,9 +74,4 @@
        anything-c-source-files-in-current-dir
        anything-c-source-buffer-not-found)
      "anything for buffers"))
-  ;; replacement for iswitchb.
-  (global-set-key [(control x) (b)] 'anything-my-for-buffers)
-
-  ;; replacement for query-query-replace
-  (global-set-key [(meta %)] 'anything-query-replace-regexp)
 )

@@ -129,12 +129,4 @@
 (load-directory-files libraries-directory "^.+el$")
 (load-directory-files conf-directory "^init.+el$")
 
-;;; Key binding configuration.
-;;; ==========================
-;(global-set-key "\C-z" 'undo)                       ;;UNDO
-(global-set-key [f1] 'help-for-help)
-(global-set-key [(control h)] 'backward-delete-char) ;;Ctrl-Hでバックスペース
-(global-set-key [(control x) (p)] (lambda () (interactive) (other-window -1)))
-(global-set-key [(control \;)] 'anything)
-
 ;;; End of .emacs.el
