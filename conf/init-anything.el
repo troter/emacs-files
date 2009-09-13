@@ -1,7 +1,7 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
 ;; (auto-install-batch "anything")
-(when (require 'anything nil t)
+(when (require 'anything)
   (require 'anything-config)
   (require 'anything-match-plugin)
 
@@ -70,4 +70,17 @@
           anything-c-source-emacs-functions
           anything-c-source-calculation-result
           ))
+
+  (defun anything-my-for-buffers ()
+    (interactive)
+    (anything-other-buffer
+     '(anything-c-source-buffers+
+       anything-c-source-files-in-current-dir
+       anything-c-source-buffer-not-found)
+     "anything for buffers"))
+  ;; replacement for iswitchb.
+  (global-set-key [(control x) (b)] 'anything-my-for-buffers)
+
+  ;; replacement for query-query-replace
+  (global-set-key [(meta %)] 'anything-query-replace-regexp)
 )
