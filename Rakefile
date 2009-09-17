@@ -69,8 +69,8 @@ end
 
 # clean.
 CLEAN.include [
-  '*~',
-  '*.elc'
+  '**/*~',
+  '**/*.elc'
 ]
 
 # End of Rakefile.
