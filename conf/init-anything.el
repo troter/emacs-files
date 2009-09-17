@@ -1,6 +1,7 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
 ;; (auto-install-batch "anything")
+
 (when (require 'anything)
   (require 'anything-config)
   (require 'anything-match-plugin)
@@ -72,6 +73,31 @@
     (anything-other-buffer
      '(anything-c-source-buffers+
        anything-c-source-files-in-current-dir
-       anything-c-source-buffer-not-found)
+       anything-c-source-buffer-not-found
+       anything-c-source-file-name-history)
      "anything for buffers"))
-)
+
+  (defun anything-kill-ring ()
+    (interactive)
+    (anything 'anything-c-source-kill-ring nil nil nil nil "*anything kill ring*"))
+
+  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/anything-complete.el")
+  (when (require 'anything-complete)
+    ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/shell-history.el")
+    ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/shell-command.el")
+    ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/anything-kyr.el")
+    ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/anything-kyr-config.el")
+    ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/anything-show-completion.el")
+    (require 'shell-history)
+    (require 'shell-command)
+    (shell-command-completion-mode)
+    (require 'anything-kyr-config)
+    (require 'anything-show-completion)
+    ;; Automatically collect symbols by 100 secs
+    (anything-lisp-complete-symbol-set-timer 200)
+    ;; replace completion commands with `anything'
+    (anything-read-string-mode 1)
+    ;; Bind C-o to complete shell history
+    (anything-complete-shell-history-setup-key "\C-o")
+    )
+  )
