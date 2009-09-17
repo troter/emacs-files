@@ -18,9 +18,10 @@
   (interactive)
   (find-lisp-find-dired junk-file-directory ".*"))
 
-(when (require 'color-moccur nil t)
-  (defun junk-file-moccur-grep-find (inputs)
-    (interactive
-     (list (moccur-grep-read-regexp moccur-grep-default-mask)))
-    (moccur-grep-find junk-file-directory inputs))
-  )
+(eval-after-load "color-moccur"
+  '(progn
+     (defun junk-file-moccur-grep-find (inputs)
+       (interactive
+        (list (moccur-grep-read-regexp moccur-grep-default-mask)))
+       (moccur-grep-find junk-file-directory inputs))
+     ))
