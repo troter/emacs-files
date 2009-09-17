@@ -907,12 +907,13 @@ used by `anything-lisp-complete-symbol-set-timer' and `anything-apropos'"
   (interactive)
   (let ((anything-map (anything-read-file-name-map))
         ;; anything-read-file-name-follow-directory uses these variables
+        (prompt "Find File: ")
         default-filename require-match predicate
         (additional-attrs '(;; because anything-c-skip-boring-files cannot
                             ;; handle (display . real) candidates
                             (candidate-transformer)
                             (type . file))))
-    (anything-complete (append (arfn-sources "Find File: " default-directory
+    (anything-complete (append (arfn-sources prompt default-directory
                                              nil nil nil nil additional-attrs)
                                anything-find-file-additional-sources)
                        "" )))
