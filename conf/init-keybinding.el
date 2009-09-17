@@ -10,6 +10,9 @@
 (global-set-key [(meta n)] (lambda () (interactive) (other-window 1)))
 (global-set-key [(meta p)] (lambda () (interactive) (other-window -1)))
 
+(global-set-key [(control x) (control r)] 'reopen-file)
+(global-set-key [(control x) (J)] 'open-junk-file)
+
 ;; replacement for iswitchb.
 (and (require 'anything nil t)
      (global-set-key [(control x) (b)] 'anything-my-for-buffers))
