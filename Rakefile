@@ -9,29 +9,33 @@ require 'find'
 task :default => [:update]
 
 desc "Update files."
-task :update => [:plugins, :info]
+task :update => [:plugins, :compile, :info]
 
-EMACS = "emacs-nox"
-EMACS_BATCH = "#{EMACS} --batch -no-init-file -no-site-file"
+
+def elisp(src)
+  emacs = "emacs-nox --batch --no-site-file"
+  sh %Q!#{emacs} --eval "#{src}"!
+end
+
 def auto_install(datasource, package, install_dir)
-  sh <<-EOS
-    #{EMACS_BATCH} --directory #{install_dir} \
-    --eval "
-    (progn
-      (require 'auto-install)
-      (require 'cl)
-      (setq auto-install-directory (concat (car load-path) \\"/\\")
-            auto-install-save-confirm nil
-            auto-install-package-name-list nil
-            auto-install-install-confirm nil)
-      (auto-install-#{datasource} \\"#{package}\\")
-      (while (reduce '(lambda (x y) (or x y))
-    		 (mapcar '(lambda (b) (assoc 'auto-install-download-buffer
-                                                 (buffer-local-variables b)))
-                             (buffer-list)))
-        (sit-for 1)))
-    "
-  EOS
+  elisp <<EOS
+(progn
+  (setq install_dir (expand-file-name \\"#{install_dir}\\")
+        load-path (cons install_dir load-path)
+        auto-install-directory install_dir
+        auto-install-save-confirm nil
+        auto-install-package-name-list nil
+        auto-install-install-confirm nil)
+  (require 'auto-install)
+  (require 'cl)
+  (auto-install-#{datasource} \\"#{package}\\")
+  (while (reduce '(lambda (x y) (or x y))
+		 (mapcar '(lambda (b)
+			    (assoc 'auto-install-download-buffer
+				   (buffer-local-variables b)))
+			 (buffer-list)))
+    (sit-for 1)))
+EOS
 end
 
 task :plugins do
@@ -52,20 +56,18 @@ task :plugins do
   EOS
 end
 
+task :compile do
+  FileList["plugins/*.el"].each do |el|
+    sh %Q[emacs-nox --directory plugins -batch -f batch-byte-compile "#{el}" || echo "can not compile" ]
+  end
+end
+
 task :info do
   sh <<-EOS
-    install-info Progmode --name=php-mode --description="Major mode for editing PHP code." \
+    install-info --name=php-mode --description="Major mode for editing PHP code." \
     --info-file=info/php-mode.info.gz --info-dir=info
   EOS
 end
-
-
-#  sh "svn export -q --force #{repos} #{dest}"
-#  ["http://svn.coderepos.org/share/config/yasnippet/common"].each do |repos|
-#  generate_rule_elisp_download(dest, :download_yasnippet) do |t|
-#      
-#  end
-#end
 
 # clean.
 CLEAN.include [
