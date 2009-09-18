@@ -6,6 +6,8 @@
   (require 'anything-config)
   (require 'anything-match-plugin)
 
+  (setq anything-su-or-sudo "sudo")
+
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/ac-anything.el")
   (require 'ac-anything)
   (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-anything)
@@ -99,5 +101,7 @@
     (anything-read-string-mode 1)
     ;; Bind C-o to complete shell history
     (anything-complete-shell-history-setup-key "\C-o")
+    
+    (define-key (anything-read-file-name-map) "\C-i" 'anything-select-action)
     )
   )
