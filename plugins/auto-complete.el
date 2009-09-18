@@ -900,6 +900,7 @@ use SOURCES as `ac-sources'.")
 
 (defun ac-sources-init ()
   "Implementation for `ac-init-function' by sources."
+  (or ac-current-sources (setq ac-current-sources ac-sources))
   (dolist (source ac-current-sources)
     (let ((init-function (ac-get-source-property 'init source)))
       (if init-function

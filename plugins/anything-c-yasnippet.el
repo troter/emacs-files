@@ -1,7 +1,7 @@
 ;;; anything-c-yasnippet.el --- anything config for yasnippet.el
 
 ;; Author: Kenji.I (Kenji Imakado) <ken.imakaado@gmail.com>
-;; Version: 0.5
+;; Version: 0.6
 ;; Keywords: anything yasnippet
 
 ;; This file is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
+;; thans to grandVin for patch on his blog.
 
 ;; anything-source name  => anything-c-source-yasnippet
 ;;
@@ -69,10 +70,8 @@
 (require 'anything)
 (require 'yasnippet)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;;; Code
-(defvar anything-c-yas-version "0.5" "Version of anything-c-yasnippet")
+(defvar anything-c-yas-version "0.6" "Version of anything-c-yasnippet")
 
 (defgroup anything-c-yasnippet nil
   "anything config yasnippet"
@@ -110,7 +109,6 @@ otherwise display just name
 ex. for (...) { ... }"
   :type 'boolean
   :group 'anything-c-yasnippet)
-
 
 (defvar anything-c-yas-snippets-dir-list nil)
 (defadvice yas/load-directory-1 (around anything-yas-build-alist activate)
@@ -158,37 +156,38 @@ If SNIPPET-FILE does not contain directory, it is placed in default snippet dire
                  (setq result (anything-c-yas-find-recursively regexp file predicate))))
           finally (return result))))
 
+
 (defun anything-c-yas-build-cur-snippets-alist (&optional table)
-  (let* ((result-alist '((candidates) (transformed) (template-key-alist)))
-         (hash-value-alist nil)
-         (cur-table (or table (yas/snippet-table anything-c-yas-cur-major-mode)))
-         (parent-table (yas/snippet-table-parent cur-table)) ;`yas/snippet-table-parent'
-         (hash-table (yas/snippet-table-hash cur-table))) ;`yas/snippet-table-hash'
-    (maphash (lambda (k v) (setq hash-value-alist (append v hash-value-alist))) hash-table)
-    (loop with transformed
-          with templates
-          with template-key-alist
-          for lst in hash-value-alist
-          for key = (car lst)
-          for template-struct = (cdr lst)
-          for name = (yas/template-name template-struct) ;`yas/template-name'
-          for template = (yas/template-content template-struct) ;`yas/template-content'
-          do (progn (push template templates)
-                    (push `(,name . ,template) transformed)
-                    (push `(,template . ,key) template-key-alist))
-          finally (progn (push `(candidates . ,templates) result-alist)
-                         (push `(transformed . ,transformed) result-alist)
-                         (push `(template-key-alist . ,template-key-alist) result-alist)))
-    ;; if cur-table has parent build recursively
-    (when parent-table
-      (let ((rec-ret (anything-c-yas-build-cur-snippets-alist parent-table))
-            (alist-keys '(candidates transformed template-key-alist)))
-        (mapc (lambda (key)
-                (let ((res-list (assq key result-alist))
-                      (rec-val (assoc-default key rec-ret)))
-                  (setcdr res-list (nconc rec-val (cdr res-list)))))
-              alist-keys)))
-    result-alist))
+  (let ((yas/choose-keys-first nil)
+        (yas/choose-tables-first nil)
+        (yas/buffer-local-condition 'always))
+    (let* ((result-alist '((candidates) (transformed) (template-key-alist)))
+           (hash-value-alist nil)
+           (cur-table (first (yas/get-snippet-tables anything-c-yas-cur-major-mode)))
+           (hash-table (yas/snippet-table-hash cur-table))) ;`yas/snippet-table-hash'
+      (let ((hashes (loop for table in (yas/get-snippet-tables)
+                          collect (yas/snippet-table-hash table))))
+        (loop for hash in hashes
+              do (maphash (lambda (k v)
+                            (setq hash-value-alist (append v hash-value-alist))
+                            )
+                          hash))
+        (loop with transformed
+              with templates
+              with template-key-alist
+              for lst in hash-value-alist
+              for key = (car lst)
+              for template-struct = (cdr lst)
+              for name = (yas/template-name template-struct) ;`yas/template-name'
+              for template = (yas/template-content template-struct) ;`yas/template-content'
+              do (progn (push template templates)
+                        (push `(,name . ,template) transformed)
+                        (push `(,template . ,key) template-key-alist))
+              finally (progn (push `(candidates . ,templates) result-alist)
+                             (push `(transformed . ,transformed) result-alist)
+                             (push `(template-key-alist . ,template-key-alist) result-alist)))
+        result-alist)
+      )))
 
 (defun anything-c-yas-get-modes ()
   (let ((cur-major-mode anything-c-yas-cur-major-mode))
@@ -336,6 +335,34 @@ space match anyword greedy"
                            (anything-c-yas-find-file-snippet-by-template template)))
     (match . (anything-c-yas-match))))
 
+
+;;; visit template
+(defun anything-c-yas-all-templates ()
+  (let ((tables (yas/get-snippet-tables)))
+    (loop for table in tables
+          append (yas/snippet-table-templates table))))
+
+(defun anything-c-yas-flatten-templates (templates)
+  (loop for lot in templates ;lot is list of templates
+        append lot))
+
+(defun anything-c-yas-snippet-files-candidates ()
+  "called in `anything-c-source-yasnippet-snippet-files' candidates"
+  (let ((yas/choose-keys-first nil)
+        (yas/choose-tables-first nil)
+        (yas/buffer-local-condition 'always))
+    (with-current-buffer anything-current-buffer
+      (mapcar* 'yas/template-file
+               (mapcar 'cdr
+                        (anything-c-yas-all-templates))))))
+
+;; (anything 'anything-c-source-yasnippet-snippet-files)
+(defvar anything-c-source-yasnippet-snippet-files
+  '((name . "yasnippet snippet files")
+    (candidates . anything-c-yas-snippet-files-candidates)
+    (type . file)
+    ))
+
 
 ;;; Commands
 (defun anything-c-yas-complete ()
@@ -343,12 +370,19 @@ space match anyword greedy"
   (interactive)
   (anything 'anything-c-source-yasnippet))
 
+(defun anything-c-yas-visit-snippet-file ()
+  "List of yasnippet snippet files"
+  (interactive)
+  (anything 'anything-c-source-yasnippet-snippet-files))
+
 (defun anything-c-yas-create-snippet-on-region (&optional start end file-name)
   "Create a snippet from region."
   (interactive "r")
   (let ((str (buffer-substring-no-properties start end)))
     (anything-c-yas-create-new-snippet str file-name)))
 ;; (anything-c-yas-create-snippet-on-region (region-beginning) (region-end) "aaaa")
+
+
 
 (provide 'anything-c-yasnippet)
 ;; anything-c-yasnippet.el ends here

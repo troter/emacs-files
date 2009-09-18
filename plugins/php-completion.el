@@ -188,7 +188,7 @@ see `phpcmp-search-url'"
 ;; Struct `phpcmp-tag'
 ;; tag-file: TAGS file path
 
-;; path: fileÇÃfullpath
+;; path: file„ÅÆfullpath
 
 ;; classes:
 ;; list of Struct `phpcmp-class'
@@ -532,7 +532,7 @@ see `phpcmp-search-url'"
      ((stringp docstring)
       (insert docstring)
       (goto-char (point-min))
-      (re-search-forward (rx bol "ê‡ñæ") nil t)
+      (re-search-forward (rx bol "Ë™¨Êòé") nil t)
       (buffer-substring-no-properties (point-at-bol) (point-max)))
      (t
       ""))))
