@@ -69,10 +69,10 @@
           ))
 
   (defun anything-my-for-buffers ()
+    "Preconfigured `anything' for buffers."
     (interactive)
     (anything-other-buffer
      '(anything-c-source-buffers+
-       anything-c-source-files-in-current-dir
        anything-c-source-buffer-not-found
        anything-c-source-file-name-history)
      "anything for buffers"))
