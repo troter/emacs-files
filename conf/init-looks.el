@@ -25,9 +25,21 @@
 )
 
 (and ; hl-line
- (global-hl-line-mode t)
- (setq hl-line-face 'underline)
- (hl-line-mode 1))
+ (defface hlline-face
+   '((((class color)
+       (background dark))
+       ;;(:background "dark state gray"))
+      (:background "gray10"
+                   :underline "gray24"))
+     (((class color)
+       (background light))
+      (:background "ForestGreen"
+                   :underline nil))
+     (t ()))
+   "*Face used by hl-line.")
+ (setq hl-line-face 'hlline-face)
+ ;;(setq hl-line-face 'underline)
+ (global-hl-line-mode t))
 
 (and ; mode line
  (setq line-number-mode t)   ;;カーソルのある行番号を表示
@@ -48,3 +60,55 @@
    ;; マウスカーソルを消す
    (setq w32-hide-mouse-on-key t)
    (setq w32-hide-mouse-timeout 5000)))
+
+;; refer :http://openlab.dino.co.jp/wp-content/uploads/2008/08/dotemacs-jaspace.txt
+;; (auto-install-from-url "http://homepage3.nifty.com/satomii/software/jaspace.el")
+;; タブ, 全角スペース、改行直前の半角スペースを表示する
+(when (require 'jaspace nil t)
+  (when (boundp 'jaspace-modes)
+    (setq jaspace-modes (append jaspace-modes
+                                (list 'php-mode
+                                      'yaml-mode
+                                      'javascript-mode
+                                      'ruby-mode
+                                      'text-mode
+                                      'fundamental-mode))))
+  (when (boundp 'jaspace-alternate-jaspace-string)
+    (setq jaspace-alternate-jaspace-string "□"))
+  (when (boundp 'jaspace-highlight-tabs)
+    (setq jaspace-highlight-tabs ?^))
+  (when (boundp 'jaspace-alternate-eol-string)
+    (setq jaspace-alternate-eol-string nil))
+  (add-hook 'jaspace-mode-off-hook
+            (lambda()
+              (when (boundp 'show-trailing-whitespace)
+                (setq show-trailing-whitespace nil))))
+  (add-hook 'jaspace-mode-hook
+            (lambda()
+              (progn
+                (when (boundp 'show-trailing-whitespace)
+                  (setq show-trailing-whitespace t))
+                (face-spec-set 'jaspace-highlight-jaspace-face
+                               '((((class color) (background light))
+                                  (:foreground "blue"))
+                                 (t (:foreground "green"))))
+                (face-spec-set 'jaspace-highlight-tab-face
+                               '((((class color) (background light))
+                                  (:foreground "red"
+                                   :background "unspecified"
+                                   :strike-through nil
+                                   :underline t))
+                                 (t (:foreground "purple"
+                                     :background "unspecified"
+                                     :strike-through nil
+                                     :underline t))))
+                (face-spec-set 'trailing-whitespace
+                               '((((class color) (background light))
+                                  (:foreground "red"
+                                   :background "unspecified"
+                                   :strike-through nil
+                                   :underline t))
+                                 (t (:foreground "purple"
+                                     :background "unspecified"
+                                     :strike-through nil
+                                     :underline t))))))))
