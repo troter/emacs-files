@@ -1,5 +1,10 @@
 # -*- mode: ruby; coding: utf-8-unix; indent-tabs-mode: nil -*-
 # Rakefile for my emacs configration.
+#
+# TODO:
+# - ruleを使った形に変更する
+# - yasnippet-bundleからbundleでない形にする
+#
 begin; require 'rubygem'; rescue LoadError; end
 
 require 'rake'
@@ -12,9 +17,9 @@ desc "Update files."
 task :update => [:plugins, :compile, :info]
 
 
-def elisp(src)
-  emacs = "emacs-nox --batch --no-site-file"
-  sh %Q!#{emacs} --eval "#{src}"!
+def elisp(src, option="")
+  emacs = ENV['EMACS_CLIENT'] || "emacs"
+  sh %Q!#{emacs} --batch --no-site-file #{option} --eval "#{src}"!
 end
 
 def auto_install(datasource, package, install_dir)
@@ -58,7 +63,7 @@ end
 
 task :compile do
   FileList["plugins/*.el"].each do |el|
-    sh %Q[emacs-nox --directory plugins -batch -f batch-byte-compile "#{el}" || echo "can not compile" ]
+    elisp %Q!(byte-compile-file \\"#{el}\\")!, %Q!--directory plugins!
   end
 end
 
