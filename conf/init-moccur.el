@@ -5,3 +5,9 @@
 ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/moccur-edit.el")
 (require 'color-moccur)
 (require 'moccur-edit)
+(setq moccur-split-word t)
+;; migemoがrequireできる環境ならmigemoを使う
+(when (require 'migemo nil t) ;第三引数がnon-nilだとloadできなかった場合にエラーではなくnilを返す
+  (setq moccur-use-migemo t))
+
+
