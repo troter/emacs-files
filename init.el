@@ -2,6 +2,12 @@
 ;;; My emacs.el.
 ;;; ============
 
+;; TODO
+;; - windows, mac, linuxで利用できるsuper key, hyper keyの設定
+;;   （右optionや右windowskeyに設定したい）
+;; - keybindの設定を記述する場所について考える（都度設定する？）
+;;
+
 ;; Common Lisp extensions for Emacs.
 (require 'cl)
 
@@ -18,10 +24,10 @@
 (defun fold-right (proc init lis)
   (if lis
       (funcall proc (car lis) (fold-right proc init (cdr lis))) init))
- 
+
 (defun fold-left (proc init lis)
   (if lis (fold-left proc (funcall proc init (car lis)) (cdr lis)) init))
- 
+
 (defalias 'fold 'fold-left)
 
 (defun compose (&rest flist)
