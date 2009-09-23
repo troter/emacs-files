@@ -7,6 +7,7 @@
 :; shift `expr $OPTIND - 1`
 :; exec $EMACS_PROGRAM -Q --batch --load "$0" "$@"
 (dolist (file command-line-args-left)
+  (setq parse-sexp-ignore-comments t)
   (with-temp-buffer
     (insert-file-contents file)
     (condition-case data
