@@ -13,13 +13,6 @@
 (global-set-key [(control x) (control r)] 'reopen-file)
 (global-set-key [(control x) (J)] 'open-junk-file)
 
-;; replacement for iswitchb.
-(and (require 'anything nil t)
-     (global-set-key [(control x) (b)] 'anything-my-for-buffers))
-
-;; replacement for query-query-replace
-(global-set-key [(meta %)] 'anything-query-replace-regexp)
-
 ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/key-chord.el")
 (when (require 'key-chord nil t)
   (key-chord-mode 1)
