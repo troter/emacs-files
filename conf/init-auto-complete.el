@@ -2,6 +2,21 @@
 ;; (auto-install-batch "auto-complete development version")
 (when (require 'auto-complete nil t)
   (global-auto-complete-mode t)
+
+  ;; Use C-n/C-p to select candidates
+  (define-key ac-complete-mode-map [(control n)] 'ac-next)
+  (define-key ac-complete-mode-map [(control p)] 'ac-previous)
+
+  ;; Completion by TAB
+  (define-key ac-complete-mode-map [(tab)] 'ac-complete)
+  (define-key ac-complete-mode-map [(return)] nil)
+
+  (eval-after-load "anything"
+    ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/ac-anything.el")
+    '(progn
+       (require 'ac-anything)
+       (define-key ac-complete-mode-map [(control i)] 'ac-complete-with-anything)))
+
   (add-hook 'ruby-mode-hook
             (lambda ()
               (when (require 'rcodetools nil t)
