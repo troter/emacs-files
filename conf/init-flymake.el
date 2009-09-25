@@ -21,6 +21,9 @@
           (cons
            '("\\(\\(?:Parse error\\|Fatal error\\|Warning\\): .*\\) in \\(.*\\) on line \\([0-9]+\\)" 2 3 nil 1)
            flymake-err-line-patterns)))
+  (eval-after-load "php-mode"
+    '(progn (defun-add-hook 'php-mode-hook (flymake-mode t))))
+
   ;; JavaScript用設定
   (when (not (fboundp 'flymake-javascript-init))
     ;; flymake-javascript-initが未定義のバージョンだったら、自分で定義する
@@ -42,8 +45,6 @@
           (cons
            '("\\(.+\\)(\\([0-9]+\\)): \\(?:lint \\)?\\(\\(?:warning\\|SyntaxError\\):.+\\)" 1 2 nil 3)
            flymake-err-line-patterns)))
-  (add-hook 'php-mode-hook
-            '(lambda() (flymake-mode t)))
   (add-hook 'javascript-mode-hook
             '(lambda() (flymake-mode t)))
 
