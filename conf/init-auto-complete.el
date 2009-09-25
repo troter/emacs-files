@@ -15,8 +15,9 @@
     ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/ac-anything.el")
     '(progn
        (require 'ac-anything)
-       (define-key ac-complete-mode-map [(control i)] 'ac-complete-with-anything)))
+       (define-key ac-complete-mode-map [(meta i)] 'ac-complete-with-anything)))
 
+  ;; TODO eval ater load
   (add-hook 'ruby-mode-hook
             (lambda ()
               (when (require 'rcodetools nil t)
@@ -24,6 +25,7 @@
                 (make-local-variable 'ac-omni-completion-sources)
                 (setq ac-omni-completion-sources
                       '(("\\.\\=" . (ac-source-rcodetools)))))))
+  ;; TODO eval ater load
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               (require 'auto-complete-emacs-lisp)

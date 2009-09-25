@@ -11,7 +11,7 @@
     ;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
     (require 'anything-c-yasnippet)
     (setq anything-c-yas-space-match-any-greedy t) ;スペース区切りで絞り込めるようにする デフォルトは nil
-    (global-set-key (kbd "C-c y") 'anything-c-yas-complete))
+    (global-set-key [(control c) (y)] 'anything-c-yas-complete))
 
   ;; candidates-file  plug-in
   (defun anything-compile-source--candidates-file (source)
@@ -91,9 +91,9 @@
     ;; replace completion commands with `anything'
     (anything-read-string-mode 1)
     ;; Bind C-o to complete shell history
-    (anything-complete-shell-history-setup-key "\C-o")
-    
-    (define-key (anything-read-file-name-map) "\C-i" 'anything-select-action)
+    (anything-complete-shell-history-setup-key [(control o)])
+
+    (define-key (anything-read-file-name-map) [(meta i)] 'anything-select-action)
     )
 
   ;; replacement for iswitchb.

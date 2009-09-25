@@ -6,6 +6,7 @@
 ;; - windows, mac, linuxで利用できるsuper key, hyper keyの設定
 ;;   （右optionや右windowskeyに設定したい）
 ;; - keybindの設定を記述する場所について考える（都度設定する？）
+;; - defun-eval-after-load
 ;;
 
 ;; Common Lisp extensions for Emacs.
