@@ -23,6 +23,5 @@
      ;;; キーバインドの割当(好みに合わせて設定してください)
      (global-set-key [(meta o)] 'anything-c-moccur-occur-by-moccur) ;バッファ内検索
      (global-set-key [(control meta o)] 'anything-c-moccur-dmoccur) ;ディレクトリ
-     (add-hook 'dired-mode-hook ;dired
-               '(lambda ()
-                  (local-set-key [(O)] 'anything-c-moccur-dired-do-moccur-by-moccur)))))
+     (defun-add-hook 'dired-mode-hook ;dired
+       (local-set-key [(O)] 'anything-c-moccur-dired-do-moccur-by-moccur))))

@@ -15,13 +15,10 @@
   "Fontlock search function for dired."
   (search-forward-regexp
    (concat (format-time-string "%Y-%m-%d" (current-time)) " [0-9]....") arg t))
-(add-hook 'dired-mode-hook
-          '(lambda ()
-             (font-lock-add-keywords
-              major-mode
-              (list
-               '(my-dired-today-search . my-face-f-2)
-               ))))
+(defun-add-hook 'dired-mode-hook
+  (font-lock-add-keywords
+   major-mode
+   (list '(my-dired-today-search . my-face-f-2))))
 
 ;; ls -alh
 (defadvice dired-sort-order
