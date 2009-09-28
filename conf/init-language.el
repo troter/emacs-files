@@ -34,8 +34,3 @@
        (#x25A0 . #x25FF)                    ; Geometric Shapes
        (#x2600 . #x26FF)                    ; Miscellaneous Symbols
        (#x2e80 . #xd7a3) (#xff00 . #xffef)))))
-
-(and cygwin-p
-     (not window-system)
-     (set-terminal-coding-system 'sjis-dos)
-     (set-keyboard-coding-system 'sjis-dos))

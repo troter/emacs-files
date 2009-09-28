@@ -9,11 +9,6 @@
         shell-command-switch "-c"
         ;; drive letter completion on shell-mode.
         shell-file-name-chars "~/A-Za-z0-9_^$!#%&{}@`'.,:()-")
-  
-  ;; SHELLで^Mが付く場合は^Mを削除
-  (add-hook 'shell-mode-hook
-            (lambda ()
-              (set-buffer-process-coding-system 'undecided-dos 'sjis-unix)))
 
   ;; cygwin-mount
   (setq cygwin-mount-cygwin-bin-directory
