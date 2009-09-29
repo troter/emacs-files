@@ -17,19 +17,18 @@
        (require 'ac-anything)
        (define-key ac-complete-mode-map [(meta i)] 'ac-complete-with-anything)))
 
-  ;; TODO eval ater load
-  (add-hook 'ruby-mode-hook
-            (lambda ()
-              (when (require 'rcodetools nil t)
-                (require 'auto-complete-ruby)
-                (make-local-variable 'ac-omni-completion-sources)
-                (setq ac-omni-completion-sources
-                      '(("\\.\\=" . (ac-source-rcodetools)))))))
-  ;; TODO eval ater load
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (require 'auto-complete-emacs-lisp)
-              (make-local-variable 'ac-omni-completion-sources)
-              (setq ac-omni-completion-sources
-                    '(("\\.\\=" . (ac-source-emacs-lisp-features))))))
+  (eval-after-load "ruby-mode"
+    '(defun-add-hook 'ruby-mode-hook
+       (when (require 'rcodetools nil t)
+         (require 'auto-complete-ruby)
+         (make-local-variable 'ac-omni-completion-sources)
+         (setq ac-omni-completion-sources
+               '(("\\.\\=" . (ac-source-rcodetools)))))))
+
+  (defun-add-hook 'emacs-lisp-mode-hook
+    (require 'auto-complete-emacs-lisp)
+    (make-local-variable 'ac-omni-completion-sources)
+    (setq ac-omni-completion-sources
+          '(("\\.\\=" . (ac-source-emacs-lisp-features)))))
 )
+

@@ -45,8 +45,7 @@
           (cons
            '("\\(.+\\)(\\([0-9]+\\)): \\(?:lint \\)?\\(\\(?:warning\\|SyntaxError\\):.+\\)" 1 2 nil 3)
            flymake-err-line-patterns)))
-  (add-hook 'javascript-mode-hook
-            '(lambda() (flymake-mode t)))
+  (defun-add-hook 'javascript-mode-hook (flymake-mode t))
 
   (when (not (fboundp 'flymake-ruby-init))
     ;; Invoke ruby with '-c' to get syntax checking
@@ -63,12 +62,12 @@
 
     (push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
 
-    (add-hook 'ruby-mode-hook
-              '(lambda ()
-                 ;; Don't want flymake mode for ruby regions in rhtml files and also on read only files
-                 (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
-                     (flymake-mode))
-                 )))
+    (eval-after-load "ruby-mode"
+      '(defun-add-hook 'ruby-mode-hook
+         ;; Don't want flymake mode for ruby regions in rhtml files and also on read only files
+         (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
+             (flymake-mode)))))
+
   (when (not (fboundp 'flymake-elisp-init))
     (defun flymake-elisp-init ()
       (let* ((temp-file   (flymake-init-create-temp-buffer-copy
@@ -78,5 +77,5 @@
                            (file-name-directory buffer-file-name))))
         (list (concat base-directory "/bin/elisplint") (list "-p" (car command-line-args) local-file))))
     (push '("\\.el$" flymake-elisp-init) flymake-allowed-file-name-masks)
-    (add-hook 'emacs-lisp-mode-hook 'flymake-mode))
+    (defun-add-hook 'emacs-lisp-mode-hook 'flymake-mode))
 )
