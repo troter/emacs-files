@@ -1,11 +1,15 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
 ;; (auto-install-batch "anything")
-
 (when (require 'anything)
   (require 'anything-config)
   (require 'anything-match-plugin)
   (setq anything-su-or-sudo "sudo")
+
+  (define-key anything-map [(meta N)] 'anything-next-source)
+  (define-key anything-map [(meta P)] 'anything-previous-source)
+  (define-key anything-map [end] 'anything-scroll-other-window)
+  (define-key anything-map [home] 'anything-scroll-other-window-down)
 
   (when (featurep 'yasnippet)
     ;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
@@ -87,7 +91,7 @@
     (require 'anything-kyr-config)
     (require 'anything-show-completion)
     ;; Automatically collect symbols by 100 secs
-    (anything-lisp-complete-symbol-set-timer 200)
+    (anything-lisp-complete-symbol-set-timer 100)
     ;; replace completion commands with `anything'
     (anything-read-string-mode 1)
     ;; Bind C-o to complete shell history
@@ -100,6 +104,6 @@
   (global-set-key [(control x) (b)] 'anything-my-for-buffers)
   ;; replacement for yank-pop
   (global-set-key [(meta y)] 'anything-show-kill-ring)
-  ;; replacement for query-query-replace
+  ;; replacement for query-replace-regexp
   (global-set-key [(meta %)] 'anything-query-replace-regexp)
   )
