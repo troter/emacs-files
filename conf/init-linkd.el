@@ -6,7 +6,8 @@
   (when (file-directory-p linkd-icons-directory)
     (setq linkd-use-icons t))
 
-  (dolist (mode '(emacs-lisp-mode lisp-mode scheme-mode text-mode))
+  (dolist (mode '(emacs-lisp-mode-hook lisp-mode-hook
+                  scheme-mode-hook text-mode-hook))
     (add-hook mode 'linkd-mode))
 
   (define-key linkd-map [(control f3)] 'linkd-process-block)
