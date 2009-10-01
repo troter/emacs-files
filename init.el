@@ -1,8 +1,7 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-;;; My emacs.el.
-;;; ============
 
-;; TODO
+;;; (@* "TODO")
+;;
 ;; - windows, mac, linuxで利用できるsuper key, hyper keyの設定
 ;;   （右optionや右windowskeyに設定したい）
 ;; - keybindの設定を記述する場所について考える（都度設定する？）
@@ -12,6 +11,7 @@
 ;; Common Lisp extensions for Emacs.
 (require 'cl)
 
+;; (@* "utilities")
 ;; refer: http://d.hatena.ne.jp/tomoya/20090807/1249601308
 (defun x->bool (elt) (not (not elt)))
 
@@ -39,7 +39,7 @@
        (setq args
              (list (apply f args))))))
 
-
+;; (@* "predicates")
 ;; emacs-version predicates
 (dolist (ver '("22" "23" "23.0" "23.1" "23.2"))
   (set (intern (concat "emacs" ver "-p"))
@@ -66,11 +66,16 @@
       meadow-p  (featurep 'meadow)
       windows-p (or cygwin-p nt-p meadow-p))
 
+;; (@* "various path")
+;; - (@file :file-name libraries-directory)
+;; - (@file :file-name conf-directory)
+;; - (@file :file-name plugins-directory)
+;; - (@file :file-name info-directory)
 (setq base-directory "~/.emacs.d"
+      libraries-directory (expand-file-name "library" base-directory)
       conf-directory (expand-file-name "conf" base-directory)
-      info-directory (expand-file-name "info" base-directory)
       plugins-directory (expand-file-name "plugins" base-directory)
-      libraries-directory (expand-file-name "library" base-directory))
+      info-directory (expand-file-name "info" base-directory))
 
 (defun load-path-recompile (dir)
   (let (save-abbrevs) (byte-recompile-directory dir)))
@@ -87,7 +92,7 @@
 (setq load-path
       (merge-path-list
        load-path
-       (list plugins-directory 
+       (list plugins-directory
              libraries-directory)))
 (load-path-recompile plugins-directory)
 (load-path-recompile libraries-directory)
@@ -122,6 +127,7 @@
              (concat (getenv "SystemDrive") "/cygwin/usr/local/share/info/")
              (concat (getenv "SystemDrive") "/cygwin/usr/share/info/"))))
 
+;; (@* "load configuration files.")
 (defun load-directory-files (dir &optional regex)
   (let*
       ((regex (or regex ".+"))
@@ -132,7 +138,9 @@
             (when (load file nil t)
               (message "`%s' loaded." file))) files)))
 
-; loading.
+;; load direcotry files.
+;; - (@file :file-name libraries-directory)
+;; - (@file :file-name conf-directory)
 (load-directory-files libraries-directory "^.+el$")
 (load-directory-files conf-directory "^init.+el$")
 
