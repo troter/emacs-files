@@ -13,7 +13,7 @@
   (define-key linkd-map [(control f3)] 'linkd-process-block)
   (define-key linkd-map [(meta \[)] 'linkd-previous-link)
   (define-key linkd-map [(meta \])] 'linkd-next-link)
-  (define-key linkd-map [(meta return)] 'linkd-follow-at-point)
+  (define-key linkd-map "\M-\r" 'linkd-follow-at-point)
 
   ;; linkd wiki
   (when (file-directory-p linkd-wiki-directory)
