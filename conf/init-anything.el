@@ -108,6 +108,8 @@
             (keyboard-quit)
           it)))
     (ad-activate 'anything-read-buffer)
+
+    (global-set-key [(meta s)] 'anything-apropos)
     )
 
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
