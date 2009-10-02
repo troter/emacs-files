@@ -16,10 +16,9 @@ task :default => [:update]
 desc "Update files."
 task :update => [:plugins, :compile, :info]
 
-
-def elisp(src, option="")
-  emacs = ENV['EMACS_CLIENT'] || "emacs"
-  sh %Q!#{emacs} --batch --no-site-file #{option} --eval "#{src}"!
+def elisp(src, option="", &block)
+  emacs = ENV['EMACS_CMD'] || "emacs"
+  sh %Q!#{emacs} --batch --no-site-file #{option} --eval "#{src}"!, &block
 end
 
 def auto_install(datasource, package, install_dir)
@@ -61,9 +60,13 @@ task :plugins do
   EOS
 end
 
-task :compile do
-  FileList["plugins/*.el"].each do |el|
-    elisp %Q!(byte-compile-file \\"#{el}\\")!, %Q!--directory plugins!
+EL_FILES = FileList['plugins/**/*.el']
+ELC_FILES = EL_FILES.ext('.elc')
+task :compile => ELC_FILES
+
+rule '.elc' => ".el" do |t|
+  elisp %Q!(byte-compile-file \\"#{t.source}\\")!, %Q!--directory plugins! do |ok, status|
+    puts "Compile failed: #{status}" unless ok
   end
 end
 
