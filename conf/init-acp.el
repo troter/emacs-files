@@ -5,6 +5,7 @@
 ;; refer: http://d.hatena.ne.jp/kitokitoki/20090823
 (add-hook 'emacs-lisp-mode-hook 'acp-mode)
 (add-hook 'lisp-mode-hook 'acp-mode)
+(add-hook 'scheme-mode-hook 'acp-mode)
 
 (setq acp-paren-alist
   '((?( . ?))
