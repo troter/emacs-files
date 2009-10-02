@@ -3,9 +3,6 @@
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
 (global-set-key [f1] 'help-for-help)
 
-;;Ctrl-Hでバックスペース
-(global-set-key [(control h)] 'backward-delete-char)
-
 ;; M-p, M-n でバッファーの移動
 (global-set-key [(meta n)] (lambda () (interactive) (other-window 1)))
 (global-set-key [(meta p)] (lambda () (interactive) (other-window -1)))

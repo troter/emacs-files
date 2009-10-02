@@ -111,8 +111,9 @@
     )
 
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
-  (require 'descbinds-anything)
-  (descbinds-anything-install)
+  (when (require 'descbinds-anything)
+    (descbinds-anything-install)
+    (global-set-key [(control h)] 'descbinds-anything))
 
   ;; replacement for iswitchb.
   (global-set-key [(control x) (b)] 'anything-my-for-buffers)
