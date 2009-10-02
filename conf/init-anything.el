@@ -110,6 +110,10 @@
     (ad-activate 'anything-read-buffer)
     )
 
+  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
+  (require 'descbinds-anything)
+  (descbinds-anything-install)
+
   ;; replacement for iswitchb.
   (global-set-key [(control x) (b)] 'anything-my-for-buffers)
   ;; replacement for yank-pop
