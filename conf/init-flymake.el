@@ -2,7 +2,6 @@
 ;; refer: http://openlab.dino.co.jp/wp-content/uploads/2008/08/dot-emacs.txt
 ;; flymake (Emacs22から標準添付されている)
 (when (require 'flymake nil t)
-  (global-set-key "\C-cd" 'flymake-display-err-menu-for-current-line)
   ;; PHP用設定
   (when (not (fboundp 'flymake-php-init))
     ;; flymake-php-initが未定義のバージョンだったら、自分で定義する

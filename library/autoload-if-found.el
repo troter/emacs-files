@@ -7,12 +7,12 @@
        ,sexplist))
 (defmacro defun-add-hook (hookname &rest sexplist)
   "add-hook のエイリアス。引数を関数にパックして hook に追加する。"
-  `(add-hook ,hookname             (function (lambda () ,@sexplist))))
+  `(add-hook ,hookname (function (lambda () ,@sexplist))))
 (defun load-safe (loadlib)
   "安全な load。読み込みに失敗してもそこで止まらない。"
   ;; missing-ok で読んでみて、ダメならこっそり message でも出しておく
   (let ((load-status (load loadlib t)))
-    (or load-status        (message (format "[load-safe] failed %s" loadlib)))
+    (or load-status (message (format "[load-safe] failed %s" loadlib)))
     load-status))
 
 (defmacro eval-safe (&rest body)
@@ -26,3 +26,7 @@
   (and (locate-library file)
        (autoload function file docstring interactive type)))
 (put 'autoload-if-found 'lisp-indent-function 'defun)
+
+(defmacro defun-eval-after-load (file &rest sexplist)
+  "eval-after-load のエイリアス。引数を関数にパックして eval-after-load に追加する。"
+  `(eval-after-load ,file (quote (progn ,@sexplist))))

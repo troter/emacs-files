@@ -1,14 +1,38 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
+
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
 (global-set-key [f1] 'help-for-help)
 
-;; M-p, M-n でバッファーの移動
-(global-set-key [(meta n)] (lambda () (interactive) (other-window 1)))
-(global-set-key [(meta p)] (lambda () (interactive) (other-window -1)))
+(global-set-key [(control p)] (lambda () (interactive) (other-window -1)))
 
 (global-set-key [(control x) (control r)] 'reopen-file)
 (global-set-key [(control x) (J)] 'open-junk-file)
+
+(defun-eval-after-load 'anything
+  ;; replacement for iswitchb.
+  (global-set-key [(control x) (b)] 'anything-for-buffers)
+  ;; replacement for kill-buffers.
+  (global-set-key [(control x) (k)] 'anything-kill-buffers)
+  ;; replacement for yank-pop
+  (global-set-key [(meta y)] 'anything-show-kill-ring)
+  ;; replacement for query-replace-regexp
+  (global-set-key [(meta %)] 'anything-query-replace-regexp))
+
+(defun-eval-after-load 'anything-complete
+  (global-set-key [(meta s)] 'anything-apropos))
+
+(defun-eval-after-load 'descbinds-anything
+  (global-set-key [(control h)] 'descbinds-anything))
+
+(defun-eval-after-load 'anything-c-moccur
+  ;; buffer
+  (global-set-key [(meta o)] 'anything-c-moccur-occur-by-moccur)
+  ;; directory
+  (global-set-key [(control meta o)] 'anything-c-moccur-dmoccur))
+
+(defun-eval-after-load 'flymake
+  (global-set-key [(control c) (d))] 'flymake-display-err-menu-for-current-line))
 
 ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/key-chord.el")
 (when (require 'key-chord nil t)

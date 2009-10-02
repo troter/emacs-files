@@ -69,15 +69,6 @@
           anything-c-source-calculation-result
           ))
 
-  (defun anything-my-for-buffers ()
-    "Preconfigured `anything' for buffers."
-    (interactive)
-    (anything-other-buffer
-     '(anything-c-source-buffers+
-       anything-c-source-buffer-not-found
-       anything-c-source-file-name-history)
-     "anything for buffers"))
-
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/anything-complete.el")
   (when (require 'anything-complete)
     ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/shell-history.el")
@@ -96,31 +87,9 @@
     (anything-read-string-mode 1)
     ;; Bind C-o to complete shell history
     (anything-complete-shell-history-setup-key [(control o)])
-
-    (define-key (anything-read-file-name-map) [(meta i)] 'anything-select-action)
-
-    (defadvice anything-read-buffer
-      (around transmissive-keyboard-quit-anything-read-buffer)
-      (let ((it ad-do-it))
-        (if (and (not it)
-                 (or (not this-command) ;; this-commandがnilの場合がある。。。
-                     (eq this-command 'abort-recursive-edit)))
-            (keyboard-quit)
-          it)))
-    (ad-activate 'anything-read-buffer)
-
-    (global-set-key [(meta s)] 'anything-apropos)
-    )
+    (define-key (anything-read-file-name-map) [(meta i)] 'anything-select-action))
 
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
   (when (require 'descbinds-anything)
-    (descbinds-anything-install)
-    (global-set-key [(control h)] 'descbinds-anything))
-
-  ;; replacement for iswitchb.
-  (global-set-key [(control x) (b)] 'anything-my-for-buffers)
-  ;; replacement for yank-pop
-  (global-set-key [(meta y)] 'anything-show-kill-ring)
-  ;; replacement for query-replace-regexp
-  (global-set-key [(meta %)] 'anything-query-replace-regexp)
+    (descbinds-anything-install))
   )
