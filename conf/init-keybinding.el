@@ -6,7 +6,7 @@
   ;; replacement for iswitchb.
   (global-set-key [(control x) (b)] 'anything-for-buffers)
   ;; replacement for kill-buffers.
-  (global-set-key [(control x) (k)] 'anything-kill-buffers)
+  ;(global-set-key [(control x) (k)] 'anything-kill-buffers)
   ;; replacement for yank-pop
   (global-set-key [(meta y)] 'anything-show-kill-ring)
   ;; replacement for query-replace-regexp
