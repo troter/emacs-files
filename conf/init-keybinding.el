@@ -13,7 +13,7 @@
   (global-set-key [(meta %)] 'anything-query-replace-regexp))
 
 (defun-eval-after-load 'anything-complete
-  (global-set-key [(meta s)] 'anything-apropos))
+  (global-set-key [(control x) (h)] 'anything-apropos))
 
 (defun-eval-after-load 'descbinds-anything
   (global-set-key [(control h)] 'descbinds-anything))
@@ -26,12 +26,13 @@
 
 ;; (@* "others")
 (defun-eval-after-load 'flymake
-  (global-set-key [(control c) (d))] 'flymake-display-err-menu-for-current-line))
+  (global-set-key [(control c) (d)] 'flymake-display-err-menu-for-current-line))
 
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
 (global-set-key [f1] 'help-for-help)
 
-(global-set-key [(control p)] (lambda () (interactive) (other-window -1)))
+(global-set-key [(control x) (p)] (lambda () (interactive) (other-window -1)))
+(global-set-key [(control x) (w)] 'mark-whole-buffer)
 
 (global-set-key [(control x) (control r)] 'reopen-file)
 (global-set-key [(control x) (J)] 'open-junk-file)
