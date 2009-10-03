@@ -1,6 +1,6 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
-(when (require 'anything nil t)
+(unless (require 'anything nil t)
   ;; iswitch buffers
   (iswitchb-mode 1)
   (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-my-keys)
