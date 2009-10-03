@@ -2,6 +2,13 @@
 
 ;;; (@* "TODO")
 ;;
+;; - folding.elの設定を書く
+;; - moccurとanything-c-moccurの使い方を調べる
+;; - re-builder.elを試す
+;; - psvn.el, dsvn.elの調査
+;; - one-key.elのone-key-make-templateが動かない
+;; - icicles.elがどんなものか試す
+;; - org-modeを試す
 ;; - windows, mac, linuxで利用できるsuper key, hyper keyの設定
 ;;   （右optionや右windowskeyに設定したい）
 ;;

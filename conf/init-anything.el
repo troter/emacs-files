@@ -48,6 +48,5 @@
     )
 
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
-  (when (require 'descbinds-anything)
-    (descbinds-anything-install))
+  (require 'descbinds-anything)
   )

@@ -2,15 +2,15 @@
 
 ;; (@* "anything")
 (defun-eval-after-load 'anything
-  ;;(global-set-key [(control x) (k)] 'anything-kill-buffers) ;; kill-buffers
-  (global-set-key [(control x) (b)] 'anything-for-buffers)   ;; switch-to-buffer
-  (global-set-key [(meta y)] 'anything-show-kill-ring)       ;; yank-pop
-  (global-set-key [(meta %)] 'anything-query-replace-regexp) ;; query-replace-regexp
+  ;;(global-set-key [(control x) (k)] 'anything-kill-buffers) ; kill-buffers
+  (global-set-key [(control x) (b)] 'anything-for-buffers)    ; switch-to-buffer
+  (global-set-key [(meta y)] 'anything-show-kill-ring)        ; yank-pop
+  (global-set-key [(meta %)] 'anything-query-replace-regexp)  ; query-replace-regexp
 )
 
 (defun-eval-after-load 'anything-c-moccur
-  (global-set-key [(meta o)] 'anything-c-moccur-occur-by-moccur) ;; buffer
-  (global-set-key [(control meta o)] 'anything-c-moccur-dmoccur) ;; directory
+  (global-set-key [(meta o)] 'anything-c-moccur-occur-by-moccur) ; buffer
+  (global-set-key [(control meta o)] 'anything-c-moccur-dmoccur) ; directory
 )
 
 (defun-eval-after-load 'key-chord
