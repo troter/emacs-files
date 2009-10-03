@@ -31,7 +31,10 @@
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
 (global-set-key [f1] 'help-for-help)
 
-(global-set-key [(control x) (p)] (lambda () (interactive) (other-window -1)))
+;; window switch
+(global-set-key [(meta \[)] (lambda () (interactive) (other-window -1)))
+(global-set-key [(meta \])] (lambda () (interactive) (other-window 1)))
+
 (global-set-key [(control x) (w)] 'mark-whole-buffer)
 
 (global-set-key [(control x) (control r)] 'reopen-file)
