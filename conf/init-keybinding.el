@@ -30,7 +30,7 @@
   (global-set-key [(control c) (d)] 'flymake-display-err-menu-for-current-line))
 
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
-(global-set-key [f1] 'help-for-help)
+(global-set-key [f1] 'one-key-menu-help)
 
 ;; window switch
 (global-set-key [(meta \[)] (lambda () (interactive) (other-window -1)))
