@@ -1,28 +1,29 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
-;;; (@* "Global set keys")
 ;; (@* "anything")
 (defun-eval-after-load 'anything
-  ;; replacement for iswitchb.
-  (global-set-key [(control x) (b)] 'anything-for-buffers)
-  ;; replacement for kill-buffers.
-  ;(global-set-key [(control x) (k)] 'anything-kill-buffers)
-  ;; replacement for yank-pop
-  (global-set-key [(meta y)] 'anything-show-kill-ring)
-  ;; replacement for query-replace-regexp
-  (global-set-key [(meta %)] 'anything-query-replace-regexp))
-
-(defun-eval-after-load 'anything-complete
-  (global-set-key [(control x) (h)] 'anything-apropos))
-
-(defun-eval-after-load 'descbinds-anything
-  (global-set-key [(control h)] 'descbinds-anything))
+  ;;(global-set-key [(control x) (k)] 'anything-kill-buffers) ;; kill-buffers
+  (global-set-key [(control x) (b)] 'anything-for-buffers)   ;; switch-to-buffer
+  (global-set-key [(meta y)] 'anything-show-kill-ring)       ;; yank-pop
+  (global-set-key [(meta %)] 'anything-query-replace-regexp) ;; query-replace-regexp
+)
 
 (defun-eval-after-load 'anything-c-moccur
-  ;; buffer
-  (global-set-key [(meta o)] 'anything-c-moccur-occur-by-moccur)
-  ;; directory
-  (global-set-key [(control meta o)] 'anything-c-moccur-dmoccur))
+  (global-set-key [(meta o)] 'anything-c-moccur-occur-by-moccur) ;; buffer
+  (global-set-key [(control meta o)] 'anything-c-moccur-dmoccur) ;; directory
+)
+
+(defun-eval-after-load 'key-chord
+  ;; keybind
+  (defun-eval-after-load 'anything-complete
+    (key-chord-define-global "ap" 'anything-apropos))
+  (defun-eval-after-load 'descbinds-anything
+    (key-chord-define-global "df" 'descbinds-anything))
+  )
+
+;; (@* "one key")
+(defun-eval-after-load 'one-key
+  (global-set-key [(control x) (v)] 'one-key-menu-VC))
 
 ;; (@* "others")
 (defun-eval-after-load 'flymake
@@ -35,21 +36,8 @@
 (global-set-key [(meta \[)] (lambda () (interactive) (other-window -1)))
 (global-set-key [(meta \])] (lambda () (interactive) (other-window 1)))
 
-(global-set-key [(control x) (w)] 'mark-whole-buffer)
+(global-set-key [(control h)] 'backward-delete-char)
 
 (global-set-key [(control x) (control r)] 'reopen-file)
 (global-set-key [(control x) (J)] 'open-junk-file)
 
-;;; (@* "key-chord")
-;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/key-chord.el")
-(when (require 'key-chord nil t)
-  (key-chord-mode 1)
-  (setq key-chord-two-keys-delay 0.1)
-  (setq key-chord-one-keys-delay 0.1)
-  ;; don't hijack input method!
-  (defadvice toggle-input-method (around toggle-input-method-around activate)
-    (let ((input-method-function-save input-method-function))
-      ad-do-it
-      (setq input-method-function input-method-function-save)))
-  ;; keybind
-)
