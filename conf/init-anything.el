@@ -36,15 +36,6 @@
     ;; Bind C-o to complete shell history
     (anything-complete-shell-history-setup-key [(control o)])
     (define-key (anything-read-file-name-map) [(meta i)] 'anything-select-action)
-    (defadvice anything-read-buffer
-      (around transmissive-keyboard-quit-anything-read-buffer)
-      (let ((it ad-do-it))
-        (if (and (not it)
-                 (or (not this-command) ;; this-commandがnilの場合がある。。。
-                     (eq this-command 'abort-recursive-edit)))
-            (keyboard-quit)
-          it)))
-    (ad-activate 'anything-read-buffer)
     )
 
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
