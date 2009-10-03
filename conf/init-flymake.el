@@ -20,8 +20,8 @@
           (cons
            '("\\(\\(?:Parse error\\|Fatal error\\|Warning\\): .*\\) in \\(.*\\) on line \\([0-9]+\\)" 2 3 nil 1)
            flymake-err-line-patterns)))
-  (eval-after-load "php-mode"
-    '(progn (defun-add-hook 'php-mode-hook (flymake-mode t))))
+  (defun-eval-after-load 'php-mode
+    (defun-add-hook 'php-mode-hook (flymake-mode t)))
 
   ;; JavaScript用設定
   (when (not (fboundp 'flymake-javascript-init))
@@ -61,11 +61,11 @@
 
     (push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
 
-    (eval-after-load "ruby-mode"
-      '(defun-add-hook 'ruby-mode-hook
-         ;; Don't want flymake mode for ruby regions in rhtml files and also on read only files
-         (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
-             (flymake-mode)))))
+    (defun-eval-after-load 'ruby-mode
+      (defun-add-hook 'ruby-mode-hook
+        ;; Don't want flymake mode for ruby regions in rhtml files and also on read only files
+        (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
+            (flymake-mode t)))))
 
   (when (not (fboundp 'flymake-elisp-init))
     (defun flymake-elisp-init ()
@@ -76,5 +76,5 @@
                            (file-name-directory buffer-file-name))))
         (list (concat base-directory "/bin/elisplint") (list "-p" (car command-line-args) local-file))))
     (push '("\\.el$" flymake-elisp-init) flymake-allowed-file-name-masks)
-    (defun-add-hook 'emacs-lisp-mode-hook 'flymake-mode))
+    (defun-add-hook 'emacs-lisp-mode-hook (flymake-mode t)))
 )
