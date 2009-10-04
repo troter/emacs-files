@@ -1,4 +1,4 @@
-;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
+;;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
 ;; (@* "anything")
 (defun-eval-after-load 'anything
@@ -6,6 +6,12 @@
   (global-set-key [(control x) (b)] 'anything-for-buffers)    ; switch-to-buffer
   (global-set-key [(meta y)] 'anything-show-kill-ring)        ; yank-pop
   (global-set-key [(meta %)] 'anything-query-replace-regexp)  ; query-replace-regexp
+  ;; C-x a prefix
+  (defun-eval-after-load 'anything-complete
+    (global-set-key [(control x) (a) (a)] 'anything-apropos))
+  (global-set-key [(control x) (a) (r)] 'anything-regexp)
+  (global-set-key [(control x) (a) (m)] 'anything-mark-ring)
+  (global-set-key [(control x) (a) (M)] 'anything-global-mark-ring)
 )
 
 (defun-eval-after-load 'anything-c-moccur
