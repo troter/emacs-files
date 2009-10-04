@@ -22,9 +22,9 @@ def elisp(src, option="", &block)
 end
 
 def auto_install(datasource, package, install_dir)
-  elisp <<EOS
+  elisp (<<EOS
 (progn
-  (setq install_dir (expand-file-name \\"#{install_dir}\\")
+  (setq install_dir (expand-file-name "#{install_dir}")
         load-path (cons install_dir load-path)
         auto-install-directory install_dir
         auto-install-save-confirm nil
@@ -32,14 +32,26 @@ def auto_install(datasource, package, install_dir)
         auto-install-install-confirm nil)
   (require 'auto-install)
   (require 'cl)
-  (auto-install-#{datasource} \\"#{package}\\")
-  (while (reduce '(lambda (x y) (or x y))
-		 (mapcar '(lambda (b)
-			    (assoc 'auto-install-download-buffer
-				   (buffer-local-variables b)))
-			 (buffer-list)))
-    (sit-for 1)))
+  (get-buffer-create "*Messages*")
+
+  (defadvice auto-install-install (around replace-message-auto-install-install activate)
+    (defalias 'old-message (symbol-function 'message))
+    (letf* (((symbol-function 'message)
+             (lambda (format-string &rest args)
+ ;              (apply 'old-message (cons format-string args))
+               (with-current-buffer (get-buffer "*Messages*")
+                 (insert (format "%s" format-string))))))
+      ad-do-it))
+  (ad-activate 'auto-install-install)
+
+  (auto-install-#{datasource} "#{package}")
+
+  (with-current-buffer (get-buffer "*Messages*")
+    (while (not (search-forward "Installation is completed." nil t))
+      (goto-char (point-min))
+      (sit-for 1))))
 EOS
+).gsub("\"", "\\\"")
 end
 
 task :plugins do
