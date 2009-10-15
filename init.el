@@ -102,7 +102,6 @@
 (load-path-recompile plugins-directory)
 (load-path-recompile libraries-directory)
 (load (concat plugins-directory "/subdirs.el") t)
-(load (concat libraries-directory "/subdirs.el") t)
 
 (setq exec-path
       (merge-path-list
