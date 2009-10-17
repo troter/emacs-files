@@ -4,7 +4,8 @@
 (setq load-path
       (merge-path-list
        load-path
-       (list (expand-file-name "php-mode" plugins-directory)
+       (list (expand-file-name "php-mode-1.5.0" plugins-directory)
+             (expand-file-name "yasnippet-0.6.1c" plugins-directory)
              )))
 ;; Local Variables:
 ;; version-control: never
