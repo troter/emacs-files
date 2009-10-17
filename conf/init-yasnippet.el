@@ -48,6 +48,7 @@
   (defun-eval-after-load 'anything
     ;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
     (require 'anything-c-yasnippet)
+    (setq anything-c-yas-display-key-on-candidate t)
     (setq anything-c-yas-space-match-any-greedy t) ;スペース区切りで絞り込めるようにする デフォルトは nil
     (global-set-key [(control c) (y)] 'anything-c-yas-complete))
 
