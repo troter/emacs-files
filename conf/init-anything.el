@@ -11,12 +11,6 @@
   (define-key anything-map [end] 'anything-scroll-other-window)
   (define-key anything-map [home] 'anything-scroll-other-window-down)
 
-  (when (featurep 'yasnippet)
-    ;; (auto-install-from-url "http://svn.coderepos.org/share/lang/elisp/anything-c-yasnippet/anything-c-yasnippet.el")
-    (require 'anything-c-yasnippet)
-    (setq anything-c-yas-space-match-any-greedy t) ;スペース区切りで絞り込めるようにする デフォルトは nil
-    (global-set-key [(control c) (y)] 'anything-c-yas-complete))
-
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/anything-complete.el")
   (when (require 'anything-complete)
     ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/shell-history.el")
