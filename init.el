@@ -101,7 +101,6 @@
              libraries-directory)))
 (load-path-recompile plugins-directory)
 (load-path-recompile libraries-directory)
-(load (concat plugins-directory "/subdirs.el") t)
 
 (setq exec-path
       (merge-path-list
@@ -148,6 +147,7 @@
 ;; - (@file :file-name libraries-directory)
 ;; - (@file :file-name conf-directory)
 (load-directory-files libraries-directory "^.+el$")
+(load-directory-files plugins-directory "^subdirs\\.el$")
 (load-directory-files conf-directory "^init.+el$")
 
 ;;; End of .emacs.el
