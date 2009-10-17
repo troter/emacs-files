@@ -4,6 +4,9 @@
   ;; refer: http://d.hatena.ne.jp/antipop/20080321/1206090430
   (setq yas/use-menu nil)
 
+  (require 'dropdown-list)
+  (setq yas/prompt-functions '(yas/dropdown-prompt))
+
   (add-to-list 'yas/known-modes 'php-mode)
 
   (setq yas/root-directory

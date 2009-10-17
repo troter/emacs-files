@@ -1,11 +1,15 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 ;; (auto-install-batch "auto-complete development version")
 (when (require 'auto-complete nil t)
+  (require 'auto-complete-yasnippet)
   (global-auto-complete-mode t)
 
-  ;; Use C-n/C-p to select candidates
-  (define-key ac-complete-mode-map [(control n)] 'ac-next)
-  (define-key ac-complete-mode-map [(control p)] 'ac-previous)
+  (set-default 'ac-sources '(ac-source-yasnippet ac-source-abbrev ac-source-words-in-buffer))
+;  (set-default 'ac-sources '(ac-source-yasnippet))
+
+  ;; Use M-n/M-p to select candidates
+  (define-key ac-complete-mode-map [(meta n)] 'ac-next)
+  (define-key ac-complete-mode-map [(meta p)] 'ac-previous)
 
   ;; Completion by TAB
   (define-key ac-complete-mode-map [(tab)] 'ac-complete)
