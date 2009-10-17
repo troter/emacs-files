@@ -169,8 +169,11 @@ If SNIPPET-FILE does not contain directory, it is placed in default snippet dire
                           collect (yas/snippet-table-hash table))))
         (loop for hash in hashes
               do (maphash (lambda (k v)
-                            (setq hash-value-alist (append v hash-value-alist))
-                            )
+                            (let (a)
+                              (maphash (lambda (n te)
+                                         (setq a (append (list (cons k te)) a)))
+                                       v)
+                              (setq hash-value-alist (append a hash-value-alist))))
                           hash))
         (loop with transformed
               with templates
@@ -306,7 +309,7 @@ space match anyword greedy"
     (candidate-transformer . (lambda (candidates)
                                (anything-c-yas-get-transformed-list anything-c-yas-cur-snippets-alist anything-c-yas-initial-input)))
     (action . (("Insert snippet" . (lambda (template)
-                                     (yas/expand-snippet anything-c-yas-point-start anything-c-yas-point-end template)
+                                     (yas/expand-snippet template anything-c-yas-point-start anything-c-yas-point-end)
                                      (when anything-c-yas-display-msg-after-complete
                                        (message "this snippet is bound to [ %s ]"
                                                 (anything-c-yas-get-key-by-template template anything-c-yas-cur-snippets-alist)))))
