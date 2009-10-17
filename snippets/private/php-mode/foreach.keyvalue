@@ -1,0 +1,6 @@
+#contributor : troter
+#name : foreach (... as ... => ...) {...}
+# --
+foreach (${collection} as ${key} => ${value}) {
+   $0
+}

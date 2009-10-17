@@ -1,5 +1,5 @@
-#name : function template
-#contributor : troter
+#contributor : troter 
+#name : (defun-add-hook '... ...)
 # --
 (defun-add-hook '$1
   $0
