@@ -3,21 +3,28 @@
 
 (defun ac-yasnippet-candidate-1 (table)
   (let ((hashtab (yas/snippet-table-hash table))
-        (parent (yas/snippet-table-parent table))
+        (parents (yas/snippet-table-parents table))
         candidates)
     (maphash (lambda (key value)
                (push key candidates))
              hashtab)
     (setq candidates (all-completions ac-prefix (nreverse candidates)))
-    (if parent
-        (setq candidates
-              (append candidates (ac-yasnippet-candidate-1 parent))))
+    (when parents
+      (mapc (lambda (table)
+              (setq candidates
+                    (append candidates (ac-yasnippet-candidate-1 table))))
+            parents))
     candidates))
 
 (defun ac-yasnippet-candidate ()
-  (let ((table (yas/snippet-table major-mode)))
-    (if table
-        (ac-yasnippet-candidate-1 table))))
+  (let ((tables (yas/get-snippet-tables major-mode))
+        candidate)
+    (when tables
+      (mapc (lambda (table)
+              (setq candidate
+                    (append candidate (ac-yasnippet-candidate-1 table))))
+            tables))
+    candidate))
 
 (defface ac-yasnippet-candidate-face
   '((t (:background "sandybrown" :foreground "black")))
