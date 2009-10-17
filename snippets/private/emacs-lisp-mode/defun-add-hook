@@ -1,0 +1,6 @@
+#name : function template
+#contributor : troter
+# --
+(defun-add-hook '$1
+  $0
+)
