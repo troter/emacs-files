@@ -61,15 +61,6 @@ task :plugins do
       auto_install(datasource = $1, package = $2, install_dir)
     end
   end
-
-  # yasnippet
-  yasnippet_url = "http://yasnippet.googlecode.com/files/yasnippet-bundle-0.6.1b.el.tgz"
-  sh <<-EOS
-    wget "#{yasnippet_url}"
-    tar xzf #{yasnippet_url.pathmap('%f')}
-    mv yasnippet-bundle.el #{install_dir}/
-    rm  #{yasnippet_url.pathmap('%f')}
-  EOS
 end
 
 EL_FILES = FileList['plugins/**/*.el']
