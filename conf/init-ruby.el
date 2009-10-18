@@ -18,6 +18,11 @@
       (define-key ruby-mode-map [(control m)]
         'ruby-reindent-then-newline-and-indent))
     )
+
+  (defun-eval-after-load 'auto-complete
+    (when (require 'rcodetools nil t)
+      (require 'auto-complete-ruby)
+      (ac-ruby-init)))
 )
 
 ;; ri emacs use fastri
