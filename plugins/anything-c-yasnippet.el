@@ -162,10 +162,12 @@ If SNIPPET-FILE does not contain directory, it is placed in default snippet dire
         (yas/choose-tables-first nil)
         (yas/buffer-local-condition 'always))
     (let* ((result-alist '((candidates) (transformed) (template-key-alist)))
-           (hash-value-alist nil)
-           (cur-table (first (yas/get-snippet-tables anything-c-yas-cur-major-mode)))
-           (hash-table (yas/snippet-table-hash cur-table))) ;`yas/snippet-table-hash'
-      (let ((hashes (loop for table in (yas/get-snippet-tables)
+           (cur-tables
+            (if table
+                (list table)
+              (yas/get-snippet-tables anything-c-yas-cur-major-mode)))
+           (hash-value-alist nil))
+      (let ((hashes (loop for table in cur-tables
                           collect (yas/snippet-table-hash table))))
         (loop for hash in hashes
               do (maphash (lambda (k v)
