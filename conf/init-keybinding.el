@@ -12,6 +12,8 @@
   (global-set-key [(control x) (a) (r)] 'anything-regexp)
   (global-set-key [(control x) (a) (m)] 'anything-mark-ring)
   (global-set-key [(control x) (a) (M)] 'anything-global-mark-ring)
+  (defun-eval-after-load 'descbinds-anything
+    (global-set-key [(control x) (a) (d)] 'descbinds-anything))
 )
 
 (defun-eval-after-load 'anything-c-moccur
@@ -46,4 +48,3 @@
 
 (global-set-key [(control x) (control r)] 'reopen-file)
 (global-set-key [(control x) (J)] 'open-junk-file)
-
