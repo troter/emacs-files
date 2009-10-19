@@ -13,16 +13,16 @@
   (set-face-foreground 'mode-line-inactive "gray30")
   (set-face-background 'mode-line-inactive "gray85")
 
-  (and (require 'color-theme nil t)
-       (color-theme-initialize)
-       (color-theme-arjen))
-  
   (add-to-list 'default-frame-alist '(alpha . 85))
   (set-frame-parameter nil 'alpha '(85 50))
 
   (set-scroll-bar-mode 'right) ;;スクロールバーを右に表示
   (tool-bar-mode -1)           ;;ツールバーを消す
 )
+
+(when (require 'color-theme nil t)
+  (color-theme-initialize)
+  (color-theme-arjen))
 
 (and ; hl-line
  (defface hlline-face
