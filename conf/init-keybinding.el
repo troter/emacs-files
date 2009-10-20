@@ -23,12 +23,7 @@
 
 (defun-eval-after-load 'key-chord
   ;; keybind
-  (defun-eval-after-load 'anything-complete
-    (key-chord-define-global "ap" 'anything-apropos))
-  (defun-eval-after-load 'descbinds-anything
-    (key-chord-define-global "df" 'descbinds-anything))
-  )
-
+)
 ;; (@* "one key")
 (defun-eval-after-load 'one-key
   (global-set-key [(control x) (v)] 'one-key-menu-VC))
