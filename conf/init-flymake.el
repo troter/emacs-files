@@ -76,5 +76,7 @@
                            (file-name-directory buffer-file-name))))
         (list (concat base-directory "/bin/elisplint") (list "-p" (car command-line-args) local-file))))
     (push '("\\.el$" flymake-elisp-init) flymake-allowed-file-name-masks)
-    (defun-add-hook 'emacs-lisp-mode-hook (flymake-mode t)))
+    (defun-add-hook 'emacs-lisp-mode-hook
+      (when buffer-file-name
+        (flymake-mode t))))
 )
