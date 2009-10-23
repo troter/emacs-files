@@ -23,6 +23,7 @@
     (setq exec-suffix-list '(".exe" ".sh" ".pl")))
 
   ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/emacs/download/w32-symlinks.el")
+  (require 'ls-lisp)
   (require 'w32-symlinks)
   ;; http://www.bookshelf.jp/cgi-bin/goto.cgi?file=meadow&node=findfile%20symlink
   (defadvice minibuffer-complete
