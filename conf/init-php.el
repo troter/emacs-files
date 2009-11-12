@@ -5,7 +5,29 @@
   (add-to-list 'auto-mode-alist '("\\.phtml\\'" . php-mode))
   (add-to-list 'auto-mode-alist '("\\.inc\\'" . php-mode))
   (setq php-manual-url "http://www.php.net/manual/ja/")
+
+  (when (require 'hideshow)
+    (add-to-list
+     'hs-special-modes-alist
+     '(php-mode "{" "}" "[/*/]" nil hs-c-like-adjust-block-beginning))
+    (define-key php-mode-map '[(control meta y)] 'php-toggle-hideshow-function))
+
+  (defvar php-hs-hide nil "Current state of hideshow for toggling all.")
+  (defun php-toggle-hideshow-function () "Toggle hideshow all."
+    (interactive)
+    (setq php-hs-hide (not php-hs-hide))
+    (if php-hs-hide
+        (save-excursion
+          (goto-char (point-min))
+          (hs-hide-level 2)
+          (goto-char (point-max))
+          (while
+              (search-backward "/**")
+            (hs-hide-block)))
+      (hs-show-all)))
+
   (defun-add-hook 'php-mode-hook
+    (hs-minor-mode 1)
     ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/php-completion.el")
     (when (require 'anything nil t)
       (require 'php-completion)
@@ -15,3 +37,4 @@
         (make-variable-buffer-local 'ac-sources)
         (add-to-list 'ac-sources 'ac-source-php-completion)
         (auto-complete-mode t)))))
+
