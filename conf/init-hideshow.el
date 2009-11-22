@@ -7,16 +7,17 @@
       hs-hide-comments-when-hiding-all t
       search-invisivle nil)
 
-;(defun ttn-hs-hide-level-1 ()
-;  (hs-hide-level 1)
-;  (forward-sexp 1))
-;(setq hs-hide-all-non-comment-function 'ttn-hs-hide-level-1)
-
 (defvar hs-toggle-hiding-all-flag nil)
 (defun hs-toggle-hiding-all ()
   (interactive)
   (if hs-toggle-hiding-all-flag
-      (hs-hide-all)
+      (save-excursion
+        (goto-char (point-min))
+        (hs-hide-level 2)
+        (while
+            (re-search-forward hs-c-start-regexp (point-max) t)
+          (hs-hide-block)
+          (next-line)))
     (hs-show-all))
   (setq hs-toggle-hiding-all-flag (not hs-toggle-hiding-all-flag)))
 
@@ -78,3 +79,7 @@ TODO: multi-line headline."
 (dolist (hook (list 'emacs-lisp-mode-hook
                     'c++-mode-hook))
   (add-hook hook 'hideshowvis-enable))
+(defun-eval-after-load 'php-mode
+  (defun-add-hook 'php-mode-hook
+    (hideshowvis-enable)))
+

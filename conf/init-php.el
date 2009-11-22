@@ -9,21 +9,7 @@
   (when (require 'hideshow)
     (add-to-list
      'hs-special-modes-alist
-     '(php-mode "{" "}" "[/*/]" nil hs-c-like-adjust-block-beginning))
-    (defvar php-hs-hide nil "Current state of hideshow for toggling all.")
-
-    (defun php-toggle-hideshow-function () "Toggle hideshow all."
-      (interactive)
-      (setq php-hs-hide (not php-hs-hide))
-      (if php-hs-hide
-          (save-excursion
-            (goto-char (point-min))
-            (hs-hide-level 2)
-            (goto-char (point-max))
-            (while
-                (search-backward "/**")
-              (hs-hide-block)))
-        (hs-show-all))))
+     '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning)))
 
   (defun-add-hook 'php-mode-hook
     (hideshowvis-minor-mode 1)
