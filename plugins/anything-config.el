@@ -126,8 +126,6 @@
 ;;  Search Engine:
 ;;     `anything-c-source-tracker-search' (Tracker Search)
 ;;     `anything-c-source-mac-spotlight'  (mdfind)
-;;  icicle:
-;;     `anything-c-source-icicle-region' (Icicle Regions)
 ;;  Kill ring:
 ;;     `anything-c-source-kill-ring' (Kill Ring)
 ;;  Mark ring:
@@ -198,6 +196,8 @@
 ;;    Preconfigured `anything' for w3m bookmark.
 ;;  `anything-colors'
 ;;    Preconfigured `anything' for color.
+;;  `anything-bm-list'
+;;    Preconfigured `anything' for visible bookmarks.
 ;;  `anything-kill-buffers'
 ;;    You can continuously kill buffer you selected.
 ;;  `anything-query-replace-regexp'
@@ -578,7 +578,10 @@ With two prefix args allow choosing in which symbol to search."
   (anything-other-buffer '(anything-c-source-colors anything-c-source-customize-face)
                          "*anything colors*"))
 
-
+(defun anything-bm-list ()
+  "Preconfigured `anything' for visible bookmarks."
+  (interactive)
+  (anything-other-buffer 'anything-c-source-bm "*anything bm list*"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Anything Applications ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; kill buffers
@@ -660,8 +663,13 @@ With two prefix args allow choosing in which symbol to search."
    'anything-realvalue
    (1- s)))
 
+;; Shut up byte compiler
+(defun anything-goto-line (numline)
+  "Replacement of `goto-line'."
+  (goto-char (point-min)) (forward-line (1- numline)))
+
 (defun anything-c-regexp-persistent-action (txt)
-  (goto-line (anything-aif (string-match "^ *\\([0-9]+\\)" txt)
+  (anything-goto-line (anything-aif (string-match "^ *\\([0-9]+\\)" txt)
                  (string-to-number (match-string 1 txt)))))
 
 (defun anything-c-regexp-base (prompt attributes)
@@ -1229,7 +1237,7 @@ It is cleared after jumping line.")
         (ignore-errors
           (with-selected-window (get-buffer-window
                                  (get-file-buffer (car anything-c-ffap-line-location)))
-            (goto-line (cdr anything-c-ffap-line-location))))
+            (anything-goto-line (cdr anything-c-ffap-line-location))))
       (setq anything-c-ffap-line-location nil))))
 (add-hook 'anything-after-action-hook 'anything-c-ffap-line-goto-line)
 
@@ -1595,7 +1603,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
      ;; regular files
      if (and pred (not (file-directory-p pred)) (file-exists-p pred)
              (not regp) (not (or iswoman isman)))
-     collect (propertize i 'face anything-c-bookmarks-face2 'help-echo pred)
+     collect (propertize i 'face 'anything-bmkext-file 'help-echo pred)
      ;; buffer non--filename
      if (and (fboundp 'bmkext-get-buffer-name) bufp (not (bookmark-get-handler i))
              (if pred (not (file-exists-p pred)) (not pred)))
@@ -1629,6 +1637,11 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 
 (defface anything-bmkext-no--file
   '((t (:foreground "grey")))
+  "*Face used for non--file bookmarks."
+  :group 'anything)
+
+(defface anything-bmkext-file
+  '((t (:foreground "Deepskyblue2")))
   "*Face used for non--file bookmarks."
   :group 'anything)
 
@@ -1683,7 +1696,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-regions)
 
 (defun anything-c-bookmark-region-setup-alist ()
-  "Specialized filter function for bookmark+ regions."
+  "Specialized filter function for bookmarks regions."
   (anything-c-bmkext-filter-setup-alist 'bmkext-region-alist-only))
 
 ;; W3m
@@ -1696,7 +1709,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-w3m)
 
 (defun anything-c-bookmark-w3m-setup-alist ()
-  "Specialized filter function for bookmark+ w3m."
+  "Specialized filter function for bookmarks w3m."
   (anything-c-bmkext-filter-setup-alist 'bmkext-w3m-alist-only))
 
 ;; Woman Man
@@ -1709,7 +1722,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-man)
 
 (defun anything-c-bookmark-man-setup-alist ()
-  "Specialized filter function for bookmark+ w3m."
+  "Specialized filter function for bookmarks w3m."
   (append (anything-c-bmkext-filter-setup-alist 'bmkext-man-alist-only)
           (anything-c-bmkext-filter-setup-alist 'bmkext-woman-alist-only)))
 
@@ -1723,7 +1736,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-gnus)
 
 (defun anything-c-bookmark-gnus-setup-alist ()
-  "Specialized filter function for bookmark+ gnus."
+  "Specialized filter function for bookmarks gnus."
   (anything-c-bmkext-filter-setup-alist 'bmkext-gnus-alist-only))
 
 ;; Info
@@ -1736,7 +1749,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-info)
 
 (defun anything-c-bookmark-info-setup-alist ()
-  "Specialized filter function for bookmark+ info."
+  "Specialized filter function for bookmarks info."
   (anything-c-bmkext-filter-setup-alist 'bmkext-info-alist-only))
 
 ;; Local Files&directories
@@ -1749,11 +1762,11 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-files&dirs)
 
 (defun anything-c-bookmark-local-files-setup-alist ()
-  "Specialized filter function for bookmark+ locals files."
+  "Specialized filter function for bookmarks locals files."
   (anything-c-bmkext-filter-setup-alist 'bmkext-local-file-alist-only))
 
 ;; Su Files&directories
-(defun anything-c-highlight-bookmark+-su (bmk)
+(defun anything-c-highlight-bmkext-su (bmk)
   (if (bmkext-root-or-sudo-logged-p)
       (anything-c-highlight-bookmark bmk)
       (anything-c-highlight-not-logged bmk)))
@@ -1762,12 +1775,12 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
   '((name . "Bookmark Root-Files&Directories")
     (init . (lambda () (require 'bookmark-extensions) (bookmark-maybe-load-default-file)))
     (candidates . anything-c-bookmark-su-files-setup-alist)
-    (candidate-transformer anything-c-highlight-bookmark+-su)
+    (candidate-transformer anything-c-highlight-bmkext-su)
     (type . bookmark)))
 ;; (anything 'anything-c-source-bookmark-su-files&dirs)
 
 (defun anything-c-bookmark-su-files-setup-alist ()
-  "Specialized filter function for bookmark+ su/sudo files."
+  "Specialized filter function for bookmarks su/sudo files."
   (loop
      with l = (anything-c-bmkext-filter-setup-alist 'bmkext-remote-file-alist-only)
      for i in l
@@ -1789,7 +1802,7 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 ;; (anything 'anything-c-source-bookmark-ssh-files&dirs)
 
 (defun anything-c-bookmark-ssh-files-setup-alist ()
-  "Specialized filter function for bookmark+ ssh files."
+  "Specialized filter function for bookmarks ssh files."
   (loop
      with l = (anything-c-bmkext-filter-setup-alist 'bmkext-remote-file-alist-only)
      for i in l
@@ -2092,6 +2105,7 @@ http://ctags.sourceforge.net/")
 ;; (anything 'anything-c-source-ctags)
 
 ;; Semantic
+(defvar anything-semantic-candidates nil)
 (eval-when-compile (require 'semantic nil t))
 (defun anything-semantic-construct-candidates (tags depth)
   (when (require 'semantic nil t)
@@ -2320,62 +2334,6 @@ with the tracker desktop search.")
 utility mdfind.")
 ;; (anything 'anything-c-source-mac-spotlight)
 
-;;;; <icicle>
-;;; Icicle regions
-;; See: http://www.emacswiki.org/emacs-en/Icicles_-_Multiple_Regions
-;; That is the anything interface.
-
-(defvar anything-icicle-region-alist nil)
-(defvar anything-c-source-icicle-region
-  '((name . "Icicle Regions")
-    (init . (lambda ()
-              (setq anything-icicle-region-alist
-                    (loop
-                       for i in icicle-region-alist
-                       collect (concat (car i) " => " (cadr i))))))
-    (candidates . anything-icicle-region-alist)
-    (action . (("Go to region" . anything-c-icicle-region-goto-region)
-               ("Insert region at point" . (lambda (elm)
-                                             (let (reg)
-                                               (save-window-excursion
-                                                 (anything-c-icicle-region-goto-region elm)
-                                                 (setq reg (buffer-substring (mark) (point))))
-                                               (insert reg))))
-               ("Remove region" . anything-c-icicle-region-delete-region)
-               ("Update" . (lambda (elm)
-                             (icicle-purge-bad-file-regions)))))))
-
-;; (anything 'anything-c-source-icicle-region)
-
-(defun anything-icicle-select-region-action (pos)
-  "Go to the region at nth `pos' in `icicle-region-alist'.
-See `icicle-select-region-action'."
-  (let ((icicle-get-alist-candidate-function #'(lambda (pos)
-                                                 (nth pos icicle-region-alist))))
-    (icicle-select-region-action pos)))
-
-(defun anything-icicle-delete-region-from-alist (pos)
-  "Delete the region at nth `pos' from `icicle-region-alist'.
-See `icicle-delete-region-from-alist'."
-  (let ((alist-cand  (nth pos icicle-region-alist)))
-    (setq icicle-region-alist
-          (delete alist-cand icicle-region-alist)))
-  (funcall icicle-customize-save-variable-function 'icicle-region-alist icicle-region-alist))
-
-(defun anything-c-icicle-region-goto-region (candidate)
-  "Get the position of `candidate' and call `anything-icicle-select-region-action'."
-  (let ((pos (position candidate anything-icicle-region-alist))
-        (buf (second (split-string candidate " => "))))
-    (if (equal buf "*info*")
-        (info (caddr (nth pos icicle-region-alist))))
-    (anything-icicle-select-region-action pos)))
-
-(defun anything-c-icicle-region-delete-region (candidate)
-  "Get the position of `candidate' and call `anything-icicle-delete-region-from-alist'."
-  (let ((pos (position candidate anything-icicle-region-alist)))
-    (anything-icicle-delete-region-from-alist pos)))
-
-
 
 ;;;; <Kill ring>
 ;;; Kill ring
@@ -2455,9 +2413,9 @@ If this action is executed just after `yank', replace with STR as yanked string.
                     (anything-aif anything-mark-ring-cache
                         it)))
     (action . (("Goto line" . (lambda (candidate)
-                                (goto-line (string-to-number candidate))))))
+                                (anything-goto-line (string-to-number candidate))))))
     (persistent-action . (lambda (candidate)
-                           (goto-line (string-to-number candidate))
+                           (anything-goto-line (string-to-number candidate))
                            (anything-match-line-color-current-line)))))
 
 ;; (anything 'anything-c-source-mark-ring)
@@ -2474,11 +2432,11 @@ If this action is executed just after `yank', replace with STR as yanked string.
     (action . (("Goto line" . (lambda (candidate)
                                 (let ((items (split-string candidate ":")))
                                   (switch-to-buffer (second items))
-                                  (goto-line (string-to-number (car items))))))))
+                                  (anything-goto-line (string-to-number (car items))))))))
     (persistent-action . (lambda (candidate)
                            (let ((items (split-string candidate ":")))
                              (switch-to-buffer (second items))
-                             (goto-line (string-to-number (car items)))
+                             (anything-goto-line (string-to-number (car items)))
                              (anything-match-line-color-current-line))))))
                              
 (defun anything-c-source-global-mark-ring-candidates ()
@@ -2690,7 +2648,7 @@ See http://orgmode.org for the latest version.")
 (defun anything-c-org-headline-insert-link-to-headline (lineno-and-content)
   (insert
    (save-excursion
-     (goto-line (car lineno-and-content))
+     (anything-goto-line (car lineno-and-content))
      (and (looking-at "^\\*+ \\(.+?\\)\\([ \t]*:[a-zA-Z0-9_@:]+:\\)?[ \t]*$")
           (org-make-link-string (concat "*" (match-string 1)))))))
 
@@ -2893,15 +2851,14 @@ removed."
 (defvar anything-c-source-evaluation-result
   '((name . "Evaluation Result")
     (requires-pattern)
-    (match (lambda (candidate) t))
+    (match identity)
     (candidates  "dummy")
     (filtered-candidate-transformer . (lambda (candidates source)
                                         (list
                                          (condition-case nil
-                                             (prin1-to-string
+                                             (pp-to-string
                                               (eval (read anything-pattern)))
                                            (error "Error")))))
-    (volatile)
     (action ("Do Nothing" . ignore))))
 ;; (anything 'anything-c-source-evaluation-result)
 
@@ -2909,14 +2866,13 @@ removed."
 (defvar anything-c-source-calculation-result
   '((name . "Calculation Result")
     (requires-pattern)
-    (match (lambda (candidate) t))
+    (match identity)
     (candidates  "dummy")
     (filtered-candidate-transformer . (lambda (candidates source)
                                         (list
                                          (condition-case nil
                                              (calc-eval anything-pattern)
                                            (error "error")))))
-    (volatile)
     (action ("Copy result to kill-ring" . kill-new))))
 ;; (anything 'anything-c-source-calculation-result)
 
@@ -3214,7 +3170,7 @@ A list of search engines."
                           (let ((lines (split-string (buffer-string) "\n" t)))
                             (cdr lines)))))))
     (action . (("Goto line" . (lambda (candidate)
-                                (goto-line (string-to-number candidate) anything-c-source-occur-current-buffer)))))
+                                (anything-goto-line (string-to-number candidate) anything-c-source-occur-current-buffer)))))
     (requires-pattern . 1)
     (volatile)))
 ;; (anything 'anything-c-source-occur)
@@ -3700,7 +3656,7 @@ directory, open this directory."
   (when file (funcall find-file-function file))
   (if (anything-attr-defined 'adjust)
       (anything-c-goto-line-with-adjustment lineno content)
-    (goto-line lineno))
+    (anything-goto-line lineno))
   (unless (anything-attr-defined 'recenter)
     (set-window-start (get-buffer-window anything-current-buffer) (point)))
   (anything-aif (anything-attr 'after-jump-hook)
@@ -3726,7 +3682,7 @@ directory, open this directory."
                           "\\(^\\|\^m\\) *" "^ *") ;allow indent
                       (regexp-quote line-content)))
     ;; If no char pos was given, try the given line number.
-    (setq startpos (progn (goto-line line) (point)))
+    (setq startpos (progn (anything-goto-line line) (point)))
     (or startpos (setq startpos (point-min)))
     ;; First see if the tag is right at the specified location.
     (goto-char startpos)
@@ -3823,8 +3779,7 @@ It is added to `extended-command-history'.
 (defun anything-c-transform-file-load-el (actions candidate)
   "Add action to load the file CANDIDATE if it is an emacs lisp
 file.  Else return ACTIONS unmodified."
-  (if (or (string= (file-name-extension candidate) "el")
-          (string= (file-name-extension candidate) "elc"))
+  (if (member (file-name-extension candidate) '("el" "elc"))
       (append actions '(("Load Emacs Lisp File" . load-file)))
     actions))
 
