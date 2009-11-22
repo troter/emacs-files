@@ -78,6 +78,9 @@ task :info do
     install-info --name=php-mode --description="Major mode for editing PHP code." \
     --info-file=info/php-mode.info.gz --info-dir=info
   EOS
+  sh <<-EOS
+    install-info --info-file=info/elisp-ja.info --info-dir=info
+  EOS
 end
 
 # clean.
