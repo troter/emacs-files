@@ -6,5 +6,5 @@
   (require 'auto-complete-emacs-lisp)
   (ac-emacs-lisp-init))
 
-;; (auto-install-from-emacswiki "el-expectations.el")
-;; (auto-install-from-emacswiki "el-mock.el")
+;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
+;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/el-mock.el")
