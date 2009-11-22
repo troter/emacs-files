@@ -79,7 +79,8 @@ task :info do
     --info-file=info/php-mode.info.gz --info-dir=info
   EOS
   sh <<-EOS
-    install-info --info-file=info/elisp-ja.info --info-dir=info
+    install-info --info-file=info/elisp-ja.info --info-dir=info;\
+    install-info --info-file=info/emacs-lisp-intro-ja.info --info-dir=info
   EOS
 end
 
