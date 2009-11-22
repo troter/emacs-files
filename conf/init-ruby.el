@@ -11,6 +11,11 @@
   (setq ruby-deep-indent-paren-style nil)
   (setq ruby-electric-expand-delimiters-list '( ?\{))
 
+  (when (require 'hideshow)
+    (add-to-list
+     'hs-special-modes-alist
+     '(ruby-mode "class\\|module\\|def\\|if\\|unless\\|case\\|while\\|until\\|for\\|begin\\|do" "end" "#" ruby-end-of-block nil)))
+
   (defun-add-hook 'ruby-mode-hook
     (exec-if-bound (inf-ruby-keys))
     (exec-if-bound (ruby-electric-mode t))
