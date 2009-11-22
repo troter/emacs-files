@@ -20,6 +20,8 @@
     (hs-show-all))
   (setq hs-toggle-hiding-all-flag (not hs-toggle-hiding-all-flag)))
 
+(define-key hs-minor-mode-map [(control c) (h)] 'hs-hide-block)
+(define-key hs-minor-mode-map [(control c) (s)] 'hs-show-block)
 (define-key hs-minor-mode-map [(control meta i)] 'hs-toggle-hiding)
 (define-key hs-minor-mode-map [(control meta y)] 'hs-toggle-hiding-all)
 
