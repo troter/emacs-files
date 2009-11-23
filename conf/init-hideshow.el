@@ -8,12 +8,13 @@
       search-invisivle nil)
 
 (defvar hs-toggle-hiding-all-flag nil)
+(defvar hs-toggle-hiding-all-level 2)
 (defun hs-toggle-hiding-all ()
   (interactive)
   (if hs-toggle-hiding-all-flag
       (save-excursion
         (goto-char (point-min))
-        (hs-hide-level 2)
+        (hs-hide-level hs-toggle-hiding-all-level)
         (while
             (re-search-forward hs-c-start-regexp (point-max) t)
           (hs-hide-block)
@@ -25,6 +26,10 @@
 (define-key hs-minor-mode-map [(control c) (s)] 'hs-show-block)
 (define-key hs-minor-mode-map [(control meta i)] 'hs-toggle-hiding)
 (define-key hs-minor-mode-map [(control meta y)] 'hs-toggle-hiding-all)
+
+(dolist (var '(hs-toggle-hiding-all-flag
+               hs-toggle-hiding-all-level))
+  (make-variable-buffer-local var))
 
 ;;; (@* "hidehowvis")
 ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/hideshowvis.el")
@@ -47,9 +52,7 @@
   :group 'hideshow)
 
 (defun get-javadoc-comment-headline (start end)
-  "Return Javadoc comment headline.
-
-TODO: multi-line headline."
+  "Return Javadoc comment headline."
   (save-excursion
     (save-restriction
       (narrow-to-region start end)
@@ -82,4 +85,3 @@ TODO: multi-line headline."
 (defun-eval-after-load 'php-mode
   (defun-add-hook 'php-mode-hook
     (hideshowvis-enable)))
-
