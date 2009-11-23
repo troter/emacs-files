@@ -1,5 +1,5 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-
+(require 'scheme)
 (setq scheme-program-name "gosh -i")
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
@@ -66,25 +66,22 @@
 
 ;; (auto-install-from-url "http://www.neilvandyke.org/quack/quack.el")
 (when (require 'quack nil t)
-  (defun-eval-after-load 'one-key
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Quack ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    (defvar one-key-menu-quack-alist nil
-      "The `one-key' menu alist for quack.")
-    (setq one-key-menu-quack-alist
-          '(
-            (("f" . "Quack Find File")         . quack-find-file)
-            (("k" . "Quack View Keyword Docs") . quack-view-keyword-docs)
-            (("m" . "Quack View Manual")       . quack-view-manual)
-            (("r" . "Quack run Scheme")        . run-scheme)
-            (("s" . "Quack View SRFI")         . quack-view-srfi)
-            (("l" . "Quack Toggle Lambda")     . quack-toggle-lambda)
-            (("t" . "Quack Tidy Buffer")       . quack-tidy-buffer)
-            ))
-    (defun one-key-menu-quack ()
-      "The `one-key' menu for Quack."
-      (interactive)
-      (one-key-menu "Quack" one-key-menu-quack-alist t))
-    (defun-add-hook 'scheme-mode-hook
-      (define-key scheme-mode-map quack-scheme-mode-keymap-prefix 'one-key-menu-quack))
-    )
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Quack ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (defvar one-key-menu-quack-alist nil
+    "The `one-key' menu alist for quack.")
+  (setq one-key-menu-quack-alist
+        '(
+          (("f" . "Quack Find File")         . quack-find-file)
+          (("k" . "Quack View Keyword Docs") . quack-view-keyword-docs)
+          (("m" . "Quack View Manual")       . quack-view-manual)
+          (("r" . "Quack run Scheme")        . run-scheme)
+          (("s" . "Quack View SRFI")         . quack-view-srfi)
+          (("l" . "Quack Toggle Lambda")     . quack-toggle-lambda)
+          (("t" . "Quack Tidy Buffer")       . quack-tidy-buffer)
+          ))
+  (defun one-key-menu-quack ()
+    "The `one-key' menu for Quack."
+    (interactive)
+    (one-key-menu "Quack" one-key-menu-quack-alist t))
+  (define-key scheme-mode-map quack-scheme-mode-keymap-prefix 'one-key-menu-quack)
   )

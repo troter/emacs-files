@@ -5,6 +5,5 @@
 ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/one-key-default.el")
 (when (require 'one-key-default)
   (require 'one-key-config)
-  ;; one-key-make-templateが動かない。。。
-  ;;(one-key-default-setup-keys)
+  (one-key-default-setup-keys)
   )
