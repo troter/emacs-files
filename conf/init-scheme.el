@@ -1,6 +1,5 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 (require 'scheme)
-(modify-coding-system-alist 'process "gosh" '(utf-8 . utf-8))
 (setq scheme-program-name "gosh -i")
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
