@@ -11,15 +11,22 @@
      'hs-special-modes-alist
      '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning)))
 
+  ;; setup hideshow
   (defun-add-hook 'php-mode-hook
     (hideshowvis-minor-mode 1)
-    (define-key php-mode-map '[(control meta y)] 'php-toggle-hideshow-function)
+    (define-key php-mode-map '[(control meta y)] 'php-toggle-hideshow-function))
+
+  ;; setup php-completion
+  (defun-add-hook 'php-mode-hook
     ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/php-completion.el")
-    (when (require 'anything nil t)
-      (require 'php-completion)
-      (php-completion-mode t)
-      (define-key php-mode-map (kbd "C-o") 'phpcmp-complete)
-      (when (require 'auto-complete nil t)
-        (make-variable-buffer-local 'ac-sources)
-        (add-to-list 'ac-sources 'ac-source-php-completion)
-        (auto-complete-mode t)))))
+    (require 'php-completion)
+    (php-completion-mode t)
+
+    ;; with anything
+    (define-key php-mode-map (kbd "C-o") 'phpcmp-complete)
+
+    ;; with auto-complete
+    (when (require 'auto-complete nil t)
+      (make-variable-buffer-local 'ac-sources)
+      (add-to-list 'ac-sources 'ac-source-php-completion-patial)
+      (auto-complete-mode t))))
