@@ -75,7 +75,7 @@
           (("f" . "Quack Find File")         . quack-find-file)
           (("k" . "Quack View Keyword Docs") . quack-view-keyword-docs)
           (("m" . "Quack View Manual")       . quack-view-manual)
-          (("r" . "Quack run Scheme")        . run-scheme)
+          (("r" . "Quack Run Scheme")        . run-scheme)
           (("s" . "Quack View SRFI")         . quack-view-srfi)
           (("l" . "Quack Toggle Lambda")     . quack-toggle-lambda)
           (("t" . "Quack Tidy Buffer")       . quack-tidy-buffer)
