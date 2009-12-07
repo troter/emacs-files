@@ -6,16 +6,6 @@
   (add-to-list 'auto-mode-alist '("\\.inc\\'" . php-mode))
   (setq php-manual-url "http://www.php.net/manual/ja/")
 
-  (when (require 'hideshow)
-    (add-to-list
-     'hs-special-modes-alist
-     '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning)))
-
-  ;; setup hideshow
-  (defun-add-hook 'php-mode-hook
-    (hideshowvis-minor-mode 1)
-    (define-key php-mode-map '[(control meta y)] 'php-toggle-hideshow-function))
-
   ;; setup php-completion
   (defun-add-hook 'php-mode-hook
     ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/php-completion.el")

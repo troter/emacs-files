@@ -6,6 +6,10 @@
         hs-hide-comments-when-hiding-all t
         search-invisivle nil)
 
+  (add-to-list
+   'hs-special-modes-alist
+   '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning))
+
   (defvar hs-toggle-hiding-all-flag nil)
   (defvar hs-toggle-hiding-all-level 2)
   (defun hs-toggle-hiding-all ()
