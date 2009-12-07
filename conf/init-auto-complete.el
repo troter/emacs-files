@@ -1,10 +1,11 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
-;; (auto-install-batch "auto-complete development version")
-(when (require 'auto-complete nil t)
-  (require 'auto-complete-yasnippet)
+;; 
+(when (require 'auto-complete-config nil t)
   (global-auto-complete-mode t)
 
-  (set-default 'ac-sources '(ac-source-yasnippet ac-source-abbrev ac-source-words-in-buffer))
+  (set-default 'ac-sources '(ac-source-abbrev ac-source-words-in-buffer))
+  (when (ac-yasnippet-initialize)
+    (set-default 'ac-sources '(ac-source-yasnippet ac-source-abbrev ac-source-words-in-buffer)))
 
   ;; auto-complete.el の ac-source-words-in-buffer の候補に日本語を含む単語が含まれないようにする
   ;; refer: http://d.hatena.ne.jp/IMAKADO/20090813/1250130343

@@ -4,7 +4,7 @@
 
 (defvar package-resource
   '("php-mode-1.5.0" "yasnippet-0.6.1c" "color-theme-6.6.0"
-    "elscreen-1.4.6" "elscreen-dired-0.1.0" "apel-10.7"))
+    "elscreen-1.4.6" "elscreen-dired-0.1.0" "apel-10.7" "auto-complete-1.0"))
 
 (setq load-path
       (merge-path-list

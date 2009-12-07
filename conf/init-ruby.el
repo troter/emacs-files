@@ -24,10 +24,8 @@
         'ruby-reindent-then-newline-and-indent))
     )
 
-  (defun-eval-after-load 'auto-complete
-    (when (require 'rcodetools nil t)
-      (require 'auto-complete-ruby)
-      (ac-ruby-init)))
+  (defun-eval-after-load 'auto-complete-config
+    (ac-rcodetools-initialize))
 )
 
 ;; ri emacs use fastri

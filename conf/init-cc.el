@@ -13,3 +13,6 @@
   (setq indent-tabs-mode nil)
   (hide-ifdef-mode 1)
   (c-set-offset 'innamespace 0))
+
+(defun-eval-after-load 'auto-complete-config
+  (ac-c++-keywords-initialize))
