@@ -12,7 +12,7 @@
 
   ;; cygwin-mount
   (setq cygwin-mount-cygwin-bin-directory
-        (concat (getenv "windir") "\\..\\" "cygwin\\bin"))
+        (concat (getenv "SYSTEMDRIVE") "\\cygwin\\bin"))
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/cygwin-mount.el")
   (require 'cygwin-mount)
   (cygwin-mount-activate)
