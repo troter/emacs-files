@@ -52,6 +52,10 @@
     (setq anything-c-yas-space-match-any-greedy t) ;スペース区切りで絞り込めるようにする デフォルトは nil
     (global-set-key [(control c) (y)] 'anything-c-yas-complete))
 
+  ;; yasnipet use via auto-complete
+  (setq yas/trigger-key nil)
+  (yas/trigger-key-reload "TAB")
+
   (yas/initialize)
   (yas/load-all-directories)
 )
