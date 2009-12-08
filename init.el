@@ -6,7 +6,6 @@
 ;; - moccurとanything-c-moccurの使い方を調べる
 ;; - re-builder.elを試す
 ;; - psvn.el, dsvn.elの調査
-;; - one-key.elのone-key-make-templateが動かない
 ;; - icicles.elがどんなものか試す
 ;; - org-modeを試す
 ;; - windows, mac, linuxで利用できるsuper key, hyper keyの設定
