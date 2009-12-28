@@ -35,3 +35,12 @@
 ;; (require 'auto-save-buffers-enhanced)
 ;; (auto-save-buffers-enhanced-include-only-checkout-path t)
 ;; (auto-save-buffers-enhanced t)
+
+;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/recentf-ext.el")
+(require 'recentf-ext)
+
+;; minibufferの内容を保持
+;; ref: http://d.hatena.ne.jp/rubikitch/20091216/minibuffer
+(defadvice abort-recursive-edit (before minibuffer-save activate)
+  (when (eq (selected-window) (active-minibuffer-window))
+    (add-to-history minibuffer-history-variable (minibuffer-contents))))

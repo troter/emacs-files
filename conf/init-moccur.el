@@ -6,6 +6,8 @@
 (progn
   (require 'color-moccur)
   (require 'moccur-edit)
+  (dolist (mask '("\\.git/.+" "\\.docx$" "\\.xlsx$" "\\.pptx$"))
+    (add-to-list 'dmoccur-exclusion-mask mask))
   (setq moccur-split-word t))
 ;; migemoがrequireできる環境ならmigemoを使う
 (when (require 'migemo nil t) ;第三引数がnon-nilだとloadできなかった場合にエラーではなくnilを返す
