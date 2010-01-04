@@ -20,7 +20,7 @@
           (hs-hide-level hs-toggle-hiding-all-level)
           (while
               (re-search-forward hs-c-start-regexp (point-max) t)
-            (hs-hide-block)
+            (unless (hs-already-hidden-p) (hs-hide-block))
             (next-line)))
       (hs-show-all))
     (setq hs-toggle-hiding-all-flag (not hs-toggle-hiding-all-flag)))
@@ -88,8 +88,8 @@
   (setq hs-set-up-overlay 'display-code-line-counts-and-comment-headline)
 
   (dolist (hook (list 'emacs-lisp-mode-hook
-                      'c++-mode-hook))
-    (defun-add-hook hook (funcall hs-minor-mode-function)))
-  (defun-eval-after-load 'php-mode
-    (defun-add-hook 'php-mode-hook
-      (funcall hs-minor-mode-function))))
+                      'c++-mode-hook
+                      'php-mode-hook))
+    (defun-add-hook hook
+      (funcall hs-minor-mode-function t)))
+)
