@@ -37,9 +37,12 @@
       :group 'hideshow))
 
   ;; my-hiding-all
-  (defvar tr:hs-toggle-hiding-all-flag nil)
-  (defvar tr:hs-toggle-hiding-all-level 2)
+  (defvar tr:hs-toggle-hiding-all-flag nil
+    "Toggle flag for `tr:hs-toggle-hiding-all'.")
+  (defvar tr:hs-toggle-hiding-all-level 2
+    "hide level for `tr:hs-toggle-hiding-all'.")
   (defun tr:hs-toggle-hiding-all ()
+    "Toggle hiding/showing of all block."
     (interactive)
     (if tr:hs-toggle-hiding-all-flag
         (hs-show-all)
@@ -51,18 +54,24 @@
           (unless (hs-already-hidden-p) (hs-hide-block))
           (next-line))))
     (setq tr:hs-toggle-hiding-all-flag (not tr:hs-toggle-hiding-all-flag)))
+  (defun-add-hook 'hs-minor-mode-hook
+    (dolist (var '(tr:hs-toggle-hiding-all-flag
+                   tr:hs-toggle-hiding-all-level))
+      (make-variable-buffer-local var)))
 
   (defun tr:hs-show-block-children ()
-    "TODO: outline show-children like funciton."
+    "Select a block and only show 1st level children."
     (interactive)
-    )
+    (hs-show-block)
+    (hs-hide-level 1))
 
-  (define-key hs-minor-mode-map [(control c) (control h)] 'hs-hide-block)
-  (define-key hs-minor-mode-map [(control c) (control s)] 'hs-show-block)
-  (define-key hs-minor-mode-map [(control c) (control i)] 'tr:hs-show-block-children)
+  (define-key hs-minor-mode-map [(control c) (h)] 'hs-hide-block)
+  (define-key hs-minor-mode-map [(control c) (s)] 'hs-show-block)
+  (define-key hs-minor-mode-map [(control c) (i)] 'tr:hs-show-block-children)
   (define-key hs-minor-mode-map [(control meta i)] 'hs-toggle-hiding)
   (define-key hs-minor-mode-map [(control meta y)] 'tr:hs-toggle-hiding-all)
 
+  ;; hs-set-up-overlay
   (defun tr:get-javadoc-comment-headline (start end)
     "Return Javadoc comment headline."
     (save-excursion
@@ -95,9 +104,5 @@
   (dolist (hook (list 'emacs-lisp-mode-hook
                       'c++-mode-hook
                       'php-mode-hook))
-    (defun-add-hook hook
-      (funcall tr:hs-minor-mode 1)
-      (dolist (var '(tr:hs-toggle-hiding-all-flag
-                     tr:hs-toggle-hiding-all-level))
-        (make-variable-buffer-local var))))
+    (defun-add-hook hook (funcall tr:hs-minor-mode 1)))
 )
