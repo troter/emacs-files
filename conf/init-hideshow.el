@@ -10,36 +10,15 @@
    'hs-special-modes-alist
    '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning))
 
-  (defvar hs-toggle-hiding-all-flag nil)
-  (defvar hs-toggle-hiding-all-level 2)
-  (defun hs-toggle-hiding-all ()
-    (interactive)
-    (if hs-toggle-hiding-all-flag
-        (save-excursion
-          (goto-char (point-min))
-          (hs-hide-level hs-toggle-hiding-all-level)
-          (while
-              (re-search-forward hs-c-start-regexp (point-max) t)
-            (unless (hs-already-hidden-p) (hs-hide-block))
-            (next-line)))
-      (hs-show-all))
-    (setq hs-toggle-hiding-all-flag (not hs-toggle-hiding-all-flag)))
-
-  (define-key hs-minor-mode-map [(control c) (h)] 'hs-hide-block)
-  (define-key hs-minor-mode-map [(control c) (s)] 'hs-show-block)
-  (define-key hs-minor-mode-map [(control meta i)] 'hs-toggle-hiding)
-  (define-key hs-minor-mode-map [(control meta y)] 'hs-toggle-hiding-all)
-
-  (dolist (var '(hs-toggle-hiding-all-flag
-                 hs-toggle-hiding-all-level))
-    (make-variable-buffer-local var))
-
-  (defvar hs-minor-mode-function 'hs-minor-mode)
+  (defvar tr:hs-minor-mode 'hs-minor-mode
+    "Hideshow minor mode function.")
 
   (when window-system
     ;; (@* "hidehowvis")
     ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/hideshowvis.el")
     (autoload-if-found 'hideshowvis-enable "hideshowvis" "Highlight foldable regions")
+    (autoload-if-found 'hideshowvis-minor-mode "hideshowvis" "Highlight foldable regions")
+    (setq tr:hs-minor-mode 'hideshowvis-minor-mode)
     (define-fringe-bitmap 'my-hidesowvis-showable-marker [0 24 24 126 126 24 24 0])
 
     (defcustom hs-fringe-face 'hs-fringe-face
@@ -55,10 +34,36 @@
     (defcustom hs-face 'font-lock-type-face
       "*Specify the face to to use for the hidden region indicator"
       :type 'face
-      :group 'hideshow)
-    (setq hs-minor-mode-function 'hideshowvis-enable))
+      :group 'hideshow))
 
-  (defun get-javadoc-comment-headline (start end)
+  ;; my-hiding-all
+  (defvar tr:hs-toggle-hiding-all-flag nil)
+  (defvar tr:hs-toggle-hiding-all-level 2)
+  (defun tr:hs-toggle-hiding-all ()
+    (interactive)
+    (if tr:hs-toggle-hiding-all-flag
+        (hs-show-all)
+      (save-excursion
+        (goto-char (point-min))
+        (hs-hide-level tr:hs-toggle-hiding-all-level)
+        (while
+            (re-search-forward hs-c-start-regexp (point-max) t)
+          (unless (hs-already-hidden-p) (hs-hide-block))
+          (next-line))))
+    (setq tr:hs-toggle-hiding-all-flag (not tr:hs-toggle-hiding-all-flag)))
+
+  (defun tr:hs-show-block-children ()
+    "TODO: outline show-children like funciton."
+    (interactive)
+    )
+
+  (define-key hs-minor-mode-map [(control c) (control h)] 'hs-hide-block)
+  (define-key hs-minor-mode-map [(control c) (control s)] 'hs-show-block)
+  (define-key hs-minor-mode-map [(control c) (control i)] 'tr:hs-show-block-children)
+  (define-key hs-minor-mode-map [(control meta i)] 'hs-toggle-hiding)
+  (define-key hs-minor-mode-map [(control meta y)] 'tr:hs-toggle-hiding-all)
+
+  (defun tr:get-javadoc-comment-headline (start end)
     "Return Javadoc comment headline."
     (save-excursion
       (save-restriction
@@ -70,11 +75,11 @@
               (buffer-substring beg (point)))
           nil))))
 
-  (defun display-code-line-counts-and-comment-headline (ov)
+  (defun tr:display-code-line-counts-and-comment-headline (ov)
     (let* ((marker-string "*fringe-dummy*")
            (marker-length (length marker-string))
            (line-count (count-lines (overlay-start ov) (overlay-end ov)))
-           (headline (get-javadoc-comment-headline (overlay-start ov) (overlay-end ov)))
+           (headline (tr:get-javadoc-comment-headline (overlay-start ov) (overlay-end ov)))
            (display-string (format "...<%d>" line-count)))
       (when headline
         (setq display-string (concat (format "...[%s]" headline) display-string)))
@@ -85,11 +90,14 @@
       (put-text-property 0 (length display-string) 'face 'hs-face display-string)
       (overlay-put ov 'display display-string)))
 
-  (setq hs-set-up-overlay 'display-code-line-counts-and-comment-headline)
+  (setq hs-set-up-overlay 'tr:display-code-line-counts-and-comment-headline)
 
   (dolist (hook (list 'emacs-lisp-mode-hook
                       'c++-mode-hook
                       'php-mode-hook))
     (defun-add-hook hook
-      (funcall hs-minor-mode-function t)))
+      (funcall tr:hs-minor-mode 1)
+      (dolist (var '(tr:hs-toggle-hiding-all-flag
+                     tr:hs-toggle-hiding-all-level))
+        (make-variable-buffer-local var))))
 )
