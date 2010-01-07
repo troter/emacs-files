@@ -7,6 +7,26 @@
                 (smartchr '("{" "{ `!!' }" "{ \"`!!'\" }")))
 (global-set-key (kbd ">") (smartchr '(">" " => " " => '`!!''" " => \"`!!'\"")))
 
+(defun ik:insert-eol (s)
+  (interactive)
+  (lexical-let ((s s))
+    (smartchr-make-struct
+     :insert-fn (lambda ()
+                  (save-excursion
+                    (goto-char (point-at-eol))
+                    (when (not (string= (char-to-string (preceding-char)) s))
+                      (insert s))))
+     :cleanup-fn (lambda ()
+                   (save-excursion
+                     (goto-char (point-at-eol))
+                     (delete-backward-char (length s)))))))
+
+(defun ik:insert-semicolon-eol ()
+  (ik:insert-eol ";"))
+
+(global-set-key (kbd "j")
+                  (smartchr '("j" ik:insert-semicolon-eol)))
+
 (defun-eval-after-load 'php-mode
   (defun-add-hook 'php-mode-hook
     (define-key php-mode-map (kbd "<")
