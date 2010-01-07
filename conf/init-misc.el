@@ -44,3 +44,7 @@
 (defadvice abort-recursive-edit (before minibuffer-save activate)
   (when (eq (selected-window) (active-minibuffer-window))
     (add-to-history minibuffer-history-variable (minibuffer-contents))))
+
+;; (auto-install-from-url "http://www.dr-qubit.org/undo-tree/undo-tree.el")
+(require 'undo-tree)
+(global-undo-tree-mode)
