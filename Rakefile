@@ -1,24 +1,23 @@
 # -*- mode: ruby; coding: utf-8-unix; indent-tabs-mode: nil -*-
 # Rakefile for my emacs configration.
-#
-# TODO:
-# - ruleを使った形に変更する
-# - yasnippet-bundleからbundleでない形にする
-#
-begin; require 'rubygem'; rescue LoadError; end
 
+begin; require 'rubygem'; rescue LoadError; end
 require 'rake'
 require 'rake/clean'
-require 'find'
 
+CLEAN.include('**/*~', '**/*.elc')
+CLOBBER.include('anything-c-adaptive-history')
+CLOBBER.include('auto-save-list')
+
+desc "Default Task"
 task :default => [:update]
 
 desc "Update files."
-task :update => [:plugins, :compile, :info]
+task :update => [:plugins, :clean, :compile, :info]
 
-def elisp(src, option="", &block)
+def elisp(src, options=[], &block)
   emacs = ENV['EMACS_CMD'] || "emacs"
-  sh %Q!#{emacs} --batch --no-site-file #{option} --eval "#{src}"!, &block
+  sh %Q!#{emacs} --batch --no-site-file #{options.join(' ')} --eval "#{src}"!, &block
 end
 
 def auto_install(datasource, package, install_dir)
@@ -54,25 +53,27 @@ EOS
 ).gsub("\"", "\\\"")
 end
 
+desc "Download elisp using auto-install."
 task :plugins do
-  install_dir = 'plugins'
   FileList["conf/*.el"].each do |config|
     IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
-      auto_install(datasource = $1, package = $2, install_dir)
+      auto_install(datasource = $1, package = $2, install_dir = 'plugins')
     end
   end
 end
 
-EL_FILES = FileList['plugins/**/*.el']
-ELC_FILES = EL_FILES.ext('.elc')
-task :compile => ELC_FILES
-
-rule '.elc' => ".el" do |t|
-  elisp %Q!(byte-compile-file \\"#{t.source}\\")!, %Q!--directory plugins! do |ok, status|
-    puts "Compile failed: #{status}" unless ok
+desc "Compile elisp."
+task :compile do
+  load_path = ['plugins'] + Dir.glob('plugins/*/')
+  options = load_path.map {|p| "--directory #{p}" }
+  FileList['plugins/**/*.el'].each do |el|
+    elisp %Q!(byte-compile-file \\"#{el}\\")!, options do |ok, status|
+      puts "Compile failed: #{status}" unless ok
+    end
   end
 end
 
+desc "Install info."
 task :info do
   sh <<-EOS
     install-info --name=php-mode --description="Major mode for editing PHP code." \
@@ -83,11 +84,5 @@ task :info do
     install-info --info-file=info/emacs-lisp-intro-ja.info --info-dir=info
   EOS
 end
-
-# clean.
-CLEAN.include [
-  '**/*~',
-  '**/*.elc'
-]
 
 # End of Rakefile.
