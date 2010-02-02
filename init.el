@@ -151,6 +151,6 @@
 ;; - (@file :file-name conf-directory)
 (load-directory-files libraries-directory "^.+el$")
 (load-directory-files plugins-directory "^subdirs\\.el$")
-(load-directory-files conf-directory "^init.+el$")
+(load-directory-files conf-directory "^\\+?init.+el$")
 
 ;;; End of .emacs.el
