@@ -1,7 +1,7 @@
 ;;; anything-complete.el --- completion with anything
-;; $Id: anything-complete.el,v 1.72 2009/12/14 00:13:28 rubikitch Exp rubikitch $
+;; $Id: anything-complete.el,v 1.77 2010/01/29 09:20:33 rubikitch Exp $
 
-;; Copyright (C) 2008  rubikitch
+;; Copyright (C) 2008, 2009, 2010 rubikitch
 
 ;; Author: rubikitch <rubikitch@ruby-lang.org>
 ;; Keywords: matching, convenience, anything
@@ -48,6 +48,9 @@
 ;;  `anything-complete-sort-candidates'
 ;;    *Whether to sort completion candidates.
 ;;    default = nil
+;;  `anything-execute-extended-command-use-kyr'
+;;    *Use `anything-kyr' (context-aware commands) in `anything-execute-extended-command'. 
+;;    default = t
 
 ;; * `anything-lisp-complete-symbol', `anything-lisp-complete-symbol-partial-match':
 ;;     `lisp-complete-symbol' with `anything'
@@ -96,6 +99,23 @@
 ;;; History:
 
 ;; $Log: anything-complete.el,v $
+;; Revision 1.77  2010/01/29 09:20:33  rubikitch
+;; update Copyright
+;;
+;; Revision 1.76  2010/01/29 09:19:21  rubikitch
+;; New option: `anything-execute-extended-command-use-kyr'
+;;
+;; Revision 1.75  2010/01/29 09:15:24  rubikitch
+;; Make `anything-execute-extended-command' faster
+;; * eliminate "Commands (by prefix)", which makes it slow down
+;; * `C-c C-u' to update commands instead
+;;
+;; Revision 1.74  2010/01/23 04:18:18  rubikitch
+;; `ac-new-input-source': temporarily disable shortcuts
+;;
+;; Revision 1.73  2009/12/25 01:35:59  rubikitch
+;; Adjust `anything-noresume' to latest version of `anything'
+;;
 ;; Revision 1.72  2009/12/14 00:13:28  rubikitch
 ;; New command: `alcs-update-restart'
 ;;
@@ -332,7 +352,7 @@
 
 ;;; Code:
 
-(defvar anything-complete-version "$Id: anything-complete.el,v 1.72 2009/12/14 00:13:28 rubikitch Exp rubikitch $")
+(defvar anything-complete-version "$Id: anything-complete.el,v 1.77 2010/01/29 09:20:33 rubikitch Exp $")
 (require 'anything-match-plugin)
 (require 'thingatpt)
 
@@ -360,7 +380,7 @@
 ;; Warning: I'll change this function's interface. DON'T USE IN YOUR PROGRAM!
 (defun anything-noresume (&optional any-sources any-input any-prompt any-resume any-preselect any-buffer)
   (let (anything-last-sources anything-compiled-sources anything-last-buffer)
-    (anything any-sources any-input any-prompt any-resume any-preselect any-buffer)))
+    (anything any-sources any-input any-prompt 'noresume any-preselect any-buffer)))
 
 (defun anything-complete (sources target &optional limit idle-delay input-idle-delay)
   "Basic completion interface using `anything'."
@@ -444,6 +464,10 @@ used by `anything-lisp-complete-symbol-set-timer' and `anything-apropos'"
   :type 'boolean  
   :group 'anything-complete)
 
+(defcustom anything-execute-extended-command-use-kyr t
+  "*Use `anything-kyr' (context-aware commands) in `anything-execute-extended-command'. "
+  :type 'boolean  
+  :group 'anything-complete)
 (defun alcs-sort-maybe (candidates source)
   (if anything-complete-sort-candidates
       (sort candidates #'string<)
@@ -628,7 +652,12 @@ used by `anything-lisp-complete-symbol-set-timer' and `anything-apropos'"
 
 (defun ac-new-input-source (prompt require-match &optional additional-attrs)
   (unless require-match
-    `((name . ,prompt) (dummy) ,@additional-attrs)))
+    `((name . ,prompt)
+      (init . (lambda () (setq anything-orig-enable-shortcuts anything-enable-shortcuts
+                               anything-enable-shortcuts nil)))
+      (cleanup . (lambda () (setq anything-enable-shortcuts anything-orig-enable-shortcuts)))
+      (dummy)
+      ,@additional-attrs)))
 (defun* ac-default-source (default &optional accept-empty (additional-attrs '((action . identity))))
   `((name . "Default")
     (default-value . ,(or default (and accept-empty "")))
@@ -814,11 +843,10 @@ It accepts one argument, selected candidate.")
 (defun anything-read-buffer (prompt &optional default require-match start matches-set)
   "`anything' replacement for `read-buffer'."
   (let (anything-input-idle-delay)
-    (or (anything-noresume (arb-sources prompt
-                                        (if (bufferp default) (buffer-name default) default)
-                                        require-match start matches-set)
-                           start prompt nil nil "*anything complete*")
-        (keyboard-quit))))
+    (anything-noresume (arb-sources prompt
+                                    (if (bufferp default) (buffer-name default) default)
+                                    require-match start matches-set)
+                       start prompt nil nil "*anything complete*")))
 
 (defun* arb-sources (prompt default require-match start matches-set &optional (additional-attrs '((action . identity))))
   `(,(ac-default-source default t)
@@ -970,23 +998,23 @@ It accepts one argument, selected candidate.")
      (action . identity)
      (persistent-action . alcs-describe-function))
     ((name . "Commands")
+     (header-name . alcs-header-name)
      (init . (lambda () (anything-candidate-buffer
                          (get-buffer alcs-commands-buffer))))
      (candidates-in-buffer)
      (action . identity)
-     (persistent-action . alcs-describe-function))
-    ((name . "Commands (by prefix)")
-     (candidates
-      . (lambda ()
-          (all-completions anything-pattern obarray 'commandp)))
-     (volatile)
-     (action . identity)
      (persistent-action . alcs-describe-function))))
 
+;; (with-current-buffer " *command symbols*" (erase-buffer))
 (defun anything-execute-extended-command ()
   (interactive)
-  (let ((cmd (anything
-              (if (require 'anything-kyr-config nil t)
+  (setq alcs-this-command this-command)
+  (let* ((anything-map
+          (prog1 (copy-keymap anything-map)
+            (define-key anything-map "\C-c\C-u" 'alcs-update-restart)))
+         (cmd (anything
+              (if (and anything-execute-extended-command-use-kyr
+                       (require 'anything-kyr-config nil t))
                   (cons anything-c-source-kyr
                         anything-execute-extended-command-sources)
                 anything-execute-extended-command-sources))))

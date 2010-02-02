@@ -1,5 +1,5 @@
 ;;;; anything.el --- open anything / QuickSilver-like candidate-selection framework
-;; $Id: anything.el,v 1.239 2009/12/28 07:33:28 rubikitch Exp $
+;; $Id: anything.el,v 1.241 2010/01/29 18:53:17 rubikitch Exp $
 
 ;; Copyright (C) 2007        Tamas Patrovics
 ;;               2008, 2009  rubikitch <rubikitch@ruby-lang.org>
@@ -327,6 +327,13 @@
 
 ;; (@* "HISTORY")
 ;; $Log: anything.el,v $
+;; Revision 1.241  2010/01/29 18:53:17  rubikitch
+;; Fix a bug of `candidate-number-limit' in process sources.
+;;
+;; Revision 1.240  2010/01/23 04:21:31  rubikitch
+;; * `anything': Use `anything-display-buffer' as fallback
+;; * `anything-select-with-digit-shortcut': `self-insert-command' if disabled
+;;
 ;; Revision 1.239  2009/12/28 07:33:28  rubikitch
 ;; New command: `anything-toggle-resplit-window'  (C-t)
 ;;
@@ -1101,7 +1108,7 @@
 ;; New maintainer.
 ;;
 
-(defvar anything-version "$Id: anything.el,v 1.239 2009/12/28 07:33:28 rubikitch Exp $")
+(defvar anything-version "$Id: anything.el,v 1.241 2010/01/29 18:53:17 rubikitch Exp $")
 (require 'cl)
 
 ;; (@* "User Configuration")
@@ -2191,7 +2198,9 @@ already-bound variables. Yuck!
           (anything-initialize-1 any-resume any-input)
           (anything-hooks 'setup)
           (if (eq any-resume t)
-              (anything-window-configuration 'set)
+              (condition-case x
+                  (anything-window-configuration 'set)
+                (error (anything-display-buffer anything-buffer)))
             (anything-display-buffer anything-buffer))
           (unwind-protect
               (anything-read-pattern-maybe any-prompt any-input any-preselect any-resume)
@@ -2744,7 +2753,8 @@ the real value in a text property."
          (process-info (cdr process-assoc))
          (insertion-marker (assoc-default 'insertion-marker process-info))
          (incomplete-line-info (assoc 'incomplete-line process-info))
-         (item-count-info (assoc 'item-count process-info)))
+         (item-count-info (assoc 'item-count process-info))
+         (limit (anything-candidate-number-limit process-info)))
 
     (with-current-buffer anything-buffer
       (save-excursion
@@ -2777,7 +2787,7 @@ the real value in a text property."
           (dolist (candidate (anything-transform-candidates candidates process-info))
             (anything-insert-match candidate 'insert-before-markers)
             (incf (cdr item-count-info))
-            (when (>= (cdr item-count-info) anything-candidate-number-limit)
+            (when (>= (cdr item-count-info) limit)
               (anything-kill-async-process process)
               (return)))))
 
@@ -3028,7 +3038,8 @@ UNIT and DIRECTION."
           (when (overlay-buffer overlay)
             (goto-char (overlay-start overlay))
             (anything-mark-current-line)
-            (anything-exit-minibuffer))))))
+            (anything-exit-minibuffer))))
+    (self-insert-command 1)))
 
 (defun anything-exit-minibuffer ()
   "Select the current candidate by exiting the minibuffer."
