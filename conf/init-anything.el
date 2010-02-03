@@ -27,4 +27,15 @@
   (require 'anything-kyr-config)
   ;; Automatically collect symbols by 100 secs
   (anything-lisp-complete-symbol-set-timer 100)
+
+  (defadvice anything-read-buffer
+    (around transmissive-keyboard-quit-anything-read-buffer)
+    "abort-recursive-edit 時にアクションを行わない"
+    (let ((it ad-do-it))
+      (if (and (not it)
+               (or (not this-command) ;; this-commandがnilの場合がある。。。
+                   (eq this-command 'abort-recursive-edit)))
+          (keyboard-quit)
+        it)))
+  (ad-activate 'anything-read-buffer)
   )
