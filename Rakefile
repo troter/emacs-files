@@ -48,11 +48,8 @@ EOS
 end
 
 namespace :elisp do
-  desc "Update files."
-  task :update => [:download, :clean, :compile, :info]
-
-  desc "Download elisp using auto-install."
-  task :download do
+  desc "Update elisp using auto-install."
+  task :update do
     FileList["conf/*.el"].each do |config|
       IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
         auto_install(datasource = $1, package = $2, install_dir = 'plugins')
