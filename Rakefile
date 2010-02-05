@@ -9,12 +9,6 @@ CLEAN.include('**/*~', '**/*.elc')
 CLOBBER.include('anything-c-adaptive-history')
 CLOBBER.include('auto-save-list')
 
-desc "Default Task"
-task :default => [:update]
-
-desc "Update files."
-task :update => [:plugins, :clean, :compile, :info]
-
 def elisp(src, options=[], &block)
   emacs = ENV['EMACS_CMD'] || "emacs"
   sh %Q!#{emacs} --batch --no-site-file #{options.join(' ')} --eval "#{src}"!, &block
@@ -53,36 +47,38 @@ EOS
 ).gsub("\"", "\\\"")
 end
 
-desc "Download elisp using auto-install."
-task :plugins do
-  FileList["conf/*.el"].each do |config|
-    IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
-      auto_install(datasource = $1, package = $2, install_dir = 'plugins')
+namespace :elisp do
+  desc "Update elisp using auto-install."
+  task :update do
+    FileList["conf/*.el"].each do |config|
+      IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
+        auto_install(datasource = $1, package = $2, install_dir = 'plugins')
+      end
     end
   end
-end
 
-desc "Compile elisp."
-task :compile do
-  load_path = ['plugins'] + Dir.glob('plugins/*/')
-  options = load_path.map {|p| "--directory #{p}" }
-  FileList['plugins/**/*.el'].each do |el|
-    elisp %Q!(byte-compile-file \\"#{el}\\")!, options do |ok, status|
-      puts "Compile failed: #{status}" unless ok
+  desc "Compile elisp."
+  task :compile do
+    load_path = ['plugins'] + Dir.glob('plugins/*/')
+    options = load_path.map {|p| "--directory #{p}" }
+    FileList['plugins/**/*.el'].each do |el|
+      elisp %Q!(byte-compile-file \\"#{el}\\")!, options do |ok, status|
+        puts "Compile failed: #{status}" unless ok
+      end
     end
   end
-end
 
-desc "Install info."
-task :info do
-  sh <<-EOS
-    install-info --name=php-mode --description="Major mode for editing PHP code." \
-    --info-file=info/php-mode.info.gz --info-dir=info
-  EOS
-  sh <<-EOS
-    install-info --info-file=info/elisp-ja.info --info-dir=info;\
-    install-info --info-file=info/emacs-lisp-intro-ja.info --info-dir=info
-  EOS
+  desc "Install info."
+  task :info do
+    sh <<-EOS
+      install-info --name=php-mode --description="Major mode for editing PHP code." \
+      --info-file=info/php-mode.info.gz --info-dir=info
+    EOS
+    sh <<-EOS
+      install-info --info-file=info/elisp-ja.info --info-dir=info;\
+      install-info --info-file=info/emacs-lisp-intro-ja.info --info-dir=info
+    EOS
+  end
 end
 
 # End of Rakefile.
