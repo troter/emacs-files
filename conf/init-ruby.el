@@ -1,5 +1,6 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
+(require 'rinari)
 (when (autoload-if-found 'ruby-mode "ruby-mode" "Mode for editing ruby source file")
   ;;(autoload-if-found 'run-ruby "inf-ruby" "Run an inferior Ruby process")
   (require 'ruby-electric nil t)
@@ -28,10 +29,19 @@
     (ac-rcodetools-initialize))
 )
 
+;; (auto-install-from-emacswiki "anything-rurima.el")
+(let ((rurima.e (expand-file-name "misc/rubydoc/rurema.e" base-directory)))
+  (when (require 'anything-rurima nil t)
+    (setq anything-rurima-index-file rurima.e)))
+
 ;; ri emacs use fastri
 ;; gem install fastri
-;; (setq ri-ruby-script "/home/takumi/bin/ri-emacs.rb")
-;; (load "ri-ruby")
+(when (and (executable-find "rdoc")
+             (executable-find "ri"))
+  (let ((ri-emacs (expand-file-name "ri-emacs/ri-emacs.rb" plugins-directory))
+        (ri-ruby-el (expand-file-name "ri-emacs/ri-ruby.el" plugins-directory)))
+    (setq ri-ruby-script ri-emacs)
+    (autoload 'ri ri-ruby-el nil t)))
 
 ;; rd-mode
 ;; rd-mode included rdtool

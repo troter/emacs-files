@@ -81,4 +81,21 @@ namespace :elisp do
   end
 end
 
+RUBY_CMD="ruby"
+RUBY_1_9_CMD="ruby"
+namespace :ruby do
+  desc "Setup rurima and make index"
+  task :rurema do
+    mkdir_p "misc"
+    cd "misc" do
+      sh "svn co http://jp.rubyist.net/svn/rurema/doctree/trunk rubydoc" unless File.exists? "rubydoc"
+      cd "rubydoc" do
+        sh "svn update"
+        sh "wget http://www.rubyist.net/~rubikitch/archive/ar-index.rb"
+        sh "#{RUBY_1_9_CMD} ar-index.rb . rurema.e"
+      end
+    end
+  end
+end
+
 # End of Rakefile.
