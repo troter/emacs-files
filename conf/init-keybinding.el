@@ -33,6 +33,10 @@
 (defun-eval-after-load 'flymake
   (global-set-key [(control c) (d)] 'flymake-display-err-menu-for-current-line))
 
+(defun-eval-after-load 'anything-rurima
+  (global-set-key [(control c) (r)] 'anything-rurima)
+  (global-set-key [(control c) (control r)] 'anything-rurima-at-point))
+
 ;(global-set-key "\C-z" 'undo)                       ;;UNDO
 (global-set-key [f1] 'one-key-menu-help)
 
