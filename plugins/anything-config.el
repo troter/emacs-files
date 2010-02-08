@@ -52,21 +52,31 @@
 ;;
 ;; For quick start, try `anything-for-files' to open files.
 ;; 
-;; To configure anything you should setup `anything-sources'
-;; with specify source, like below:
+;; To configure anything you should define anything command
+;; with your favorite sources, like below:
 ;;
-;; (setq anything-sources
-;;       '(anything-c-source-buffers
-;;         anything-c-source-buffer-not-found
-;;         anything-c-source-file-name-history
-;;         anything-c-source-info-pages
-;;         anything-c-source-info-elisp
-;;         anything-c-source-man-pages
-;;         anything-c-source-locate
-;;         anything-c-source-emacs-commands
-;;         ))
+;; (defun my-anything ()
+;;   (interactive)
+;;   (anything-other-buffer
+;;    '(anything-c-source-buffers
+;;      anything-c-source-file-name-history
+;;      anything-c-source-info-pages
+;;      anything-c-source-info-elisp
+;;      anything-c-source-man-pages
+;;      anything-c-source-locate
+;;      anything-c-source-emacs-commands)
+;;    " *my-anything*"))
 ;;
-;; Below are complete source list you can setup in `anything-sources':
+;; Then type M-x my-anything to use sources.
+;;
+;; Defining own command is better than setup `anything-sources'
+;; directly, because you can define multiple anything commands with
+;; different sources. Each anything command should have own anything
+;; buffer, because M-x anything-resume revives anything command.
+
+;;
+;; Below are complete source list you can setup in the first argument
+;; of `anything-other-buffer' (or `anything-sources'):
 ;;
 ;;  Buffer:
 ;;     `anything-c-source-buffers'          (Buffers)
@@ -250,6 +260,10 @@
 ;;    Go down one level like unix command `cd ..'.
 ;;  `anything-find-files'
 ;;    Preconfigured anything for `find-file'.
+;;  `anything-write-file'
+;;    Preconfigured anything providing completion for `write-file'.
+;;  `anything-insert-file'
+;;    Preconfigured anything providing completion for `insert-file'.
 ;;  `anything-dired-rename-file'
 ;;    Preconfigured anything to rename files from dired.
 ;;  `anything-dired-copy-file'
@@ -315,6 +329,9 @@
 ;;  `anything-google-suggest-use-curl-p'
 ;;    *When non--nil use CURL to get info from `anything-c-google-suggest-url'.
 ;;    default = nil
+;;  `anything-c-yahoo-suggest-url'
+;;    Url used for looking up Yahoo suggestions.
+;;    default = "http://search.yahooapis.com/WebSearchService/V1/relatedSuggestion?appid=Generic&query="
 ;;  `anything-c-yahoo-suggest-search-url'
 ;;    Url used for Yahoo searching.
 ;;    default = "http://search.yahoo.com/search?&ei=UTF-8&fr&h=c&p="
@@ -342,6 +359,9 @@
 ;;  `anything-c-enable-eval-defun-hack'
 ;;    *If non-nil, execute `anything' using the source at point when C-M-x is pressed.
 ;;    default = t
+;;  `anything-tramp-verbose'
+;;    *Just like `tramp-verbose' but specific to anything.
+;;    default = 0
 
 
 ;;; Change log:
@@ -529,6 +549,13 @@ It is prepended to predefined pairs."
   "*If non-nil, execute `anything' using the source at point when C-M-x is pressed.
 This hack is invoked when pressing C-M-x in the form (defvar anything-c-source-XXX ...) or (setq anything-c-source-XXX ...)."
   :type 'boolean
+  :group 'anything-config)
+
+(defcustom anything-tramp-verbose 0
+  "*Just like `tramp-verbose' but specific to anything.
+When set to 0 don't show tramp messages in anything.
+If you want to have the default tramp messages set it to 3."
+  :type 'integer
   :group 'anything-config)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Preconfigured Anything ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1218,7 +1245,8 @@ buffer that is not the current buffer."
 
 ;; (anything 'anything-c-source-files-in-current-dir+)
 
-;;; File name completion
+;;; Anything replacement of file name completion for `find-file' and friends.
+
 (defvar anything-c-source-find-files
   '((name . "Find Files")
     (init . (lambda ()
@@ -1232,7 +1260,8 @@ buffer that is not the current buffer."
                ("Find file other window" . find-file-other-window)
                ("Find file in Dired" . anything-c-point-file-in-dired)
                ("Find file in Elscreen"  . elscreen-find-file)
-               ("Find file as root" . anything-find-file-as-root)))))
+               ("Find file as root" . anything-find-file-as-root)
+               ("Delete File(s)" . anything-delete-marked-files)))))
 
 ;; (anything 'anything-c-source-find-files)
 
@@ -1269,7 +1298,9 @@ If EXPAND is non--nil expand-file-name."
       (equal (cdr (assoc 'name (anything-get-current-source))) "Copy Files")
       (equal (cdr (assoc 'name (anything-get-current-source))) "Rename Files")
       (equal (cdr (assoc 'name (anything-get-current-source))) "Symlink Files")
-      (equal (cdr (assoc 'name (anything-get-current-source))) "Hardlink Files")))
+      (equal (cdr (assoc 'name (anything-get-current-source))) "Hardlink Files")
+      (equal (cdr (assoc 'name (anything-get-current-source))) "Write File")
+      (equal (cdr (assoc 'name (anything-get-current-source))) "Insert File")))
 
 (defun anything-find-files-down-one-level (arg)
   "Go down one level like unix command `cd ..'.
@@ -1305,6 +1336,7 @@ If prefix numeric arg is given go ARG level down."
                      (let ((tramp-name (anything-create-tramp-name "/sudo::")))
                        (replace-match tramp-name nil t anything-pattern)))
                     (t anything-pattern)))
+        (tramp-verbose anything-tramp-verbose) ; No tramp message when 0.
         ;; Don't try to tramp connect before entering the second ":".
         (tramp-file-name-regexp "\\`/\\([^[/:]+\\|[^/]+]\\):.*:"))
     (set-text-properties 0 (length path) nil path)
@@ -1365,7 +1397,45 @@ If CANDIDATE is not a directory open this file."
               "Find Files or Url: " nil nil "*Anything Find Files*")))
 
 
-;;; Anything completion for copy, rename and symlink files from dired.
+;;; Anything completion for `write-file'.==> C-x C-w
+(defvar anything-c-source-write-file
+  '((name . "Write File")
+    (candidates . anything-find-files-get-candidates)
+    (candidate-transformer anything-c-highlight-ffiles)
+    (persistent-action . anything-find-files-persistent-action)
+    (volatile)
+    (action .
+     (("Write File" . (lambda (candidate)
+                        (write-file candidate 'confirm)))))))
+
+(defun anything-write-file ()
+  "Preconfigured anything providing completion for `write-file'."
+  (interactive)
+  (anything 'anything-c-source-write-file
+            (expand-file-name default-directory)
+            "Write buffer to file: " nil nil "*Anything write file*"))
+
+;;; Anything completion for `insert-file'.==> C-x i
+(defvar anything-c-source-insert-file
+  '((name . "Insert File")
+    (candidates . anything-find-files-get-candidates)
+    (candidate-transformer anything-c-highlight-ffiles)
+    (persistent-action . anything-find-files-persistent-action)
+    (volatile)
+    (action .
+     (("Insert File" . (lambda (candidate)
+                        (when (y-or-n-p (format "Really insert %s in %s "
+                                                candidate anything-current-buffer))
+                          (insert-file candidate))))))))
+
+(defun anything-insert-file ()
+  "Preconfigured anything providing completion for `insert-file'."
+  (interactive)
+  (anything 'anything-c-source-insert-file
+            (expand-file-name default-directory)
+            "Insert file here: " nil nil "*Anything insert file*"))
+
+;;; Anything completion for copy, rename and (rel)sym/hard/link files from dired.
 (defvar anything-c-source-copy-files
   '((name . "Copy Files")
     (candidates . anything-find-files-get-candidates)
@@ -3810,6 +3880,7 @@ See also `anything-create--actions'."
   "Preconfigured `anything' for top command."
   (interactive)
   (let ((anything-samewindow t)
+        (anything-enable-shortcuts)
         (anything-display-function 'anything-default-display-buffer)
         (anything-map (copy-keymap anything-map))
         (anything-candidate-number-limit 9999))
@@ -4176,31 +4247,26 @@ The code is ripped out of `eshell-complete-commands-list'."
             completions))))
 
 (defun anything-c-file-buffers (filename)
-  "Returns a list of those buffer names which correspond to the
-file given by FILENAME."
-  (let (name ret)
-    (dolist (buf (buffer-list) ret)
+  "Returns a list of buffer names corresponding to FILENAME."
+  (let ((name     (expand-file-name filename))
+        (buf-list ()))
+    (dolist (buf (buffer-list) buf-list)
       (let ((bfn (buffer-file-name buf)))
-        (when (and bfn
-                   (string= filename bfn))
-          (push (buffer-name buf) ret)))
-      ret)))
+        (when (and bfn (string= name bfn))
+          (push (buffer-name buf) buf-list))))))
 
 (defun anything-c-delete-file (file)
-  "Delete the given file after querying the user.  Ask to kill
-buffers associated with that file, too."
-  (if (y-or-n-p (format "Really delete file %s? " file))
-      (progn
-        (let ((buffers (anything-c-file-buffers file)))
-          (delete-file file)
-          (dolist (buf buffers)
-            (when (y-or-n-p (format "Kill buffer %s, too? " buf))
-              (kill-buffer buf)))))
-    (message "Nothing deleted.")))
+  "Delete the given file after querying the user.
+Ask to kill buffers associated with that file, too."
+  (let ((buffers (anything-c-file-buffers file)))
+    (dired-delete-file file 'dired-recursive-deletes)
+    (when buffers
+      (dolist (buf buffers)
+        (when (y-or-n-p (format "Kill buffer %s, too? " buf))
+          (kill-buffer buf))))))
 
 (defun anything-c-open-file-externally (file)
-  "Open FILE with an external tool.  Query the user which tool to
-use."
+  "Open FILE with an external tool. Query the user which tool to use."
   (start-process "anything-c-open-file-externally"
                  nil
                  (completing-read "Program: "
@@ -4784,8 +4850,20 @@ If optional 2nd argument is non-nil, the file opened with `auto-revert-mode'.")
     (kill-buffer i)))
 
 (defun anything-delete-marked-files (candidate)
-  (dolist (i (anything-marked-candidates))
-    (anything-c-delete-file i)))
+  (anything-aif (anything-marked-candidates)
+      (if (y-or-n-p (format "Delete *%s Files " (length it)))
+          (progn
+            (dolist (i it)
+              (set-text-properties 0 (length i) nil i)
+              (anything-c-delete-file i))
+            (message "%s Files deleted" (length it)))
+          (message "(No deletions performed)"))
+    (set-text-properties 0 (length candidate) nil candidate)
+    (if (y-or-n-p (format "Really delete file `%s' " candidate))
+        (progn
+          (anything-c-delete-file candidate)
+          (message "1 file deleted"))
+        (message "(No deletions performed)"))))
 
 (defun anything-ediff-marked-buffers (candidate &optional merge)
   "Ediff 2 marked buffers or 1 marked buffer and current-buffer.
@@ -4886,8 +4964,7 @@ Return nil if bmk is not a valid bookmark."
            ("Find file other window" . find-file-other-window)
            ("Find file other frame" . find-file-other-frame)))
      ("Open dired in file's directory" . anything-c-open-dired)
-     ("Delete file" . anything-c-delete-file)
-     ("Delete Marked files" . anything-delete-marked-files)
+     ("Delete file(s)" . anything-delete-marked-files)
      ("Open file externally" . anything-c-open-file-externally)
      ("Open file with default tool" . anything-c-open-file-with-default-tool))
     (action-transformer anything-c-transform-file-load-el
