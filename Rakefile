@@ -54,7 +54,9 @@ namespace :elisp do
   desc "Update elisp using auto-install."
   task :update do
     FileList["**/.gitmodules"].each do |gitmodule|
-      cd File.dirname(gitmodule) { sh "git submodule update --init" }
+      cd File.dirname(gitmodule) do
+        sh "git submodule update --init"
+      end
     end
     FileList["conf/*.el"].each do |config|
       IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
