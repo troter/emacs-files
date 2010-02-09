@@ -9,9 +9,12 @@ CLEAN.include('**/*~', '**/*.elc')
 CLOBBER.include('anything-c-adaptive-history')
 CLOBBER.include('auto-save-list')
 
+# commands
+EMACS    = ENV['EMACS_CMD'] || "emacs"
+RUBY_1_9 = ENV["RUBY_1_9_CMD"] || "ruby"
+
 def elisp(src, options=[], &block)
-  emacs = ENV['EMACS_CMD'] || "emacs"
-  sh %Q!#{emacs} --batch --no-site-file #{options.join(' ')} --eval "#{src}"!, &block
+  sh %Q!#{EMACS} --batch --no-site-file #{options.join(' ')} --eval "#{src}"!, &block
 end
 
 def auto_install(datasource, package, install_dir)
@@ -84,18 +87,16 @@ namespace :elisp do
   end
 end
 
-RUBY_CMD="ruby"
-RUBY_1_9_CMD="ruby"
 namespace :ruby do
   desc "Setup rurima and make index"
   task :rurema do
-    mkdir_p "misc"
-    cd "misc" do
+    mkdir_p "misc"; cd "misc" do
       sh "svn co http://jp.rubyist.net/svn/rurema/doctree/trunk rubydoc" unless File.exists? "rubydoc"
       cd "rubydoc" do
         sh "svn update"
+        safe_unlink "ar-index.rb"
         sh "wget http://www.rubyist.net/~rubikitch/archive/ar-index.rb"
-        sh "#{RUBY_1_9_CMD} ar-index.rb . rurema.e"
+        sh "#{RUBY_1_9} ar-index.rb . rurema.e"
       end
     end
   end
