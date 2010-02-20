@@ -6,6 +6,12 @@
   ;; replace completion commands with `anything'
   (anything-read-string-mode 1)
 
+  (unless (functionp 'dired-dwim-target-directory)
+    ;; for emacs 22 ??
+    (defun dired-dwim-target-directory () dired-dwim-target))
+  ;; replace dired commands with `anything'
+  (anything-dired-bindings 1)
+
   (setq anything-su-or-sudo "sudo")
 
   (define-key anything-map [(meta N)] 'anything-next-source)
@@ -38,4 +44,18 @@
           (keyboard-quit)
         it)))
   (ad-activate 'anything-read-buffer)
+
+  ;; anything-find-file setting.
+  (setq anything-find-file-additional-sources-at-first
+        '(anything-c-source-ffap-line
+          anything-c-source-ffap-guesser))
+  (setq anything-find-file-additional-sources
+        '(anything-c-source-locate))
+  (defadvice arfn-sources
+    (after additional-arfn-sources-at-first activate)
+    "Add additional sources at first."
+    (setq ad-return-value
+          (append anything-find-file-additional-sources-at-first
+                  ad-return-value)))
+  ;;(ad-deactivate 'arfn-sources)
   )
