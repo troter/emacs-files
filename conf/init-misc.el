@@ -45,7 +45,7 @@
   (when (eq (selected-window) (active-minibuffer-window))
     (add-to-history minibuffer-history-variable (minibuffer-contents))))
 
-;; (auto-install-from-url "http://www.dr-qubit.org/undo-tree/undo-tree.el")
+;; (auto-install-from-url "http://gist.github.com/raw/301447/a9d4a2202e695f950076fbec6fd6fc9407774b6a/undo-tree.el")
 (require 'undo-tree)
 (global-undo-tree-mode)
 
