@@ -3,8 +3,5 @@
 ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/one-key.el")
 ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/one-key-config.el")
 ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/one-key-default.el")
-(when (require 'one-key-default)
-  (defun-add-hook 'emacs-startup-hook
-    (require 'one-key-config)
-    (one-key-default-setup-keys)
-    ))
+(when (autoload-if-found 'one-key-default-setup-keys "one-key-config" "setup one key")
+  (require 'one-key-default))
