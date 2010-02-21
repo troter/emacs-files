@@ -3,14 +3,14 @@
 (require 'rinari)
 (when (autoload-if-found 'ruby-mode "ruby-mode" "Mode for editing ruby source file")
   ;;(autoload-if-found 'run-ruby "inf-ruby" "Run an inferior Ruby process")
+  ;; (auto-install-from-url "http://svn.ruby-lang.org/cgi-bin/viewvc.cgi/trunk/misc/ruby-electric.el?view=co")
   (require 'ruby-electric nil t)
+  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/ruby-block.el")
+  (require 'ruby-block nil t)
 
   (dolist (regexp '("\\.rb$" "Rakefile" "\\.rake$"))
     (add-to-list 'auto-mode-alist (cons regexp 'ruby-mode)))
-
   (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
-  (setq ruby-deep-indent-paren-style nil)
-  (setq ruby-electric-expand-delimiters-list '( ?\{))
 
   (when (require 'hideshow)
     (add-to-list
@@ -20,6 +20,10 @@
   (defun-add-hook 'ruby-mode-hook
     (exec-if-bound (inf-ruby-keys))
     (exec-if-bound (ruby-electric-mode t))
+    (setq ruby-deep-indent-paren-style nil)
+    (setq ruby-electric-expand-delimiters-list '( ?\{))
+
+    (exec-if-bound (ruby-block-mode t))
     (when (fboundp 'ruby-reindent-then-newline-and-indent)
       (define-key ruby-mode-map [(control m)]
         'ruby-reindent-then-newline-and-indent))
