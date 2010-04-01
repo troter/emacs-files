@@ -53,14 +53,21 @@ end
 namespace :elisp do
   desc "Update elisp using auto-install."
   task :update do
-    FileList["**/.gitmodules"].each do |gitmodule|
-      cd File.dirname(gitmodule) do
-        sh "git submodule update --init"
-      end
-    end
+    #FileList["**/.gitmodules"].each do |gitmodule|
+    #  cd File.dirname(gitmodule) do
+    #    sh "git submodule update --init"
+    #  end
+    #end
+
+    puts <<-EOS
+      (setq auto-install-save-confirm nil
+            auto-install-package-name-list nil
+            auto-install-install-confirm nil)
+    EOS
     FileList["conf/*.el"].each do |config|
       IO.readlines(config).grep(/\(auto-install-([a-z\-]+?) \"([^"]*?)\"/) do
-        auto_install(datasource = $1, package = $2, install_dir = 'plugins')
+        puts  "(auto-install-#{$1} \"#{$2}\")"
+        #auto_install(datasource = $1, package = $2, install_dir = 'plugins')
       end
     end
   end
