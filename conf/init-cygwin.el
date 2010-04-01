@@ -1,6 +1,6 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
-(when windows-p
+(when (and windows-p (getenv "SHLVL"))
   (setq explicit-shell-file-name
         (cond ((executable-find "zsh") "zsh")
               ((executable-find "bash") "bash")
