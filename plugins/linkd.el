@@ -10,10 +10,10 @@
 ;; Copyright (C) 2009, Shaun Johnson.
 ;; Created: Fri Mar 14 07:56:32 2008 (Pacific Daylight Time)
 ;; Version: $Id: linkd.el,v 1.64 2008/03/14 $
-;; Last-Updated: Thu Mar 12 19:33 2009 
-;;           By: sjohnson
-;;     Update #: 618
-;; Package-Version: 0.8
+;; Last-Updated: Sun Mar  7 11:48:30 2010 (-0800)
+;;           By: dradams
+;;     Update #: 629
+;; Package-Version: 0.9
 ;; Website, original version: http://dto.github.com/notebook/linkd.html
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/linkd.el
 ;; URL: http://www.emacswiki.org/emacs/linkd.tar.gz
@@ -53,7 +53,7 @@
 ;;  * Embed active data objects ("datablocks") into text files.
 ;;    See (@> "Datablocks")
 ;;  * Convert Lisp source-code listings to LaTeX for publication.
-;;    See (@> "Literate programming")
+;;    See (@> "Exporting to LaTeX")
 ;;  * Define new link behaviors.
 ;;
 ;;  For detailed information about using linkd-mode, see the online
@@ -73,6 +73,12 @@
 ;;
 ;;; Change log:
 ;;
+;; 2010/03/07 dadams
+;;     linkd-render-link:
+;;       Don't render unless the (@...) is really a function call.  Thx to eeeickythump.
+;; 2010/02/28 dadams
+;;     linkd-match: Incorporated bug fix from Emacs Wiki by eeeickythump: Ensure sexp is symbol.
+;;     Incorporated addition of autoloads by Daniel Hackney (from Emacs Wiki 2010-02-06).
 ;; 2009/03/12 sjohnson
 ;;     Updated embedded URLs.
 ;; 2009/02/17 sjohnson
@@ -236,7 +242,7 @@
                                        ("info" :file-name :node :to :display)
                                        ("url"  :file-name :display))
   "Alist of possible link types and their associated Linkd keywords.
-Each key is a link type name.  
+Each key is a link type name.
 Each value is a list of Linkd keywords to use for that type (key)."
   :type '(alist
           :key-type   (string :tag "Link type")
@@ -382,6 +388,7 @@ You can set this in the `Local Variables' section of a file.")
 
 ;; (@* "Versioning") -------------------------------------------------
 
+;;;###autoload
 (defun linkd-version ()
   "Display Linkd version."
   (interactive)
@@ -410,7 +417,8 @@ Return non-nil if a link is found.  Set match-data appropriately."
     (when (search-forward (concat "(" "@") limit t) (backward-char 2))
     (let ((begin-point (point)))
       (condition-case nil (setq sexp (read (current-buffer))) ((error nil)))
-      (when (string-match "@.*" (symbol-name (car-safe sexp)))
+      (when (and (symbolp (car-safe sexp))
+                 (string-match "@.*" (symbol-name (car-safe sexp))))
         (let ((begin-marker (make-marker))
               (end-marker (make-marker)))
           (set-marker begin-marker begin-point)
@@ -459,6 +467,7 @@ Return non-nil if a link is found.  Set match-data appropriately."
       (setq linkd-previous-point (point))
       (funcall follower))))
 
+;;;###autoload
 (defun linkd-back ()
   "Return to the buffer being viewed before the last link was followed."
   (interactive)
@@ -468,6 +477,7 @@ Return non-nil if a link is found.  Set match-data appropriately."
       (goto-char linkd-previous-point)
       (setq linkd-previous-point start))))
 
+;;;###autoload
 (defun linkd-follow-at-point ()
   "Follow the link at point."
   (interactive)
@@ -485,7 +495,7 @@ Return non-nil if a link is found.  Set match-data appropriately."
 
 (defun linkd-maybe-enable-in-target ()
   "Conditionally enable linkd mode in the target of an @file link."
-  (when (or (and (booleanp linkd-enable-linkd-mode-in-target) 
+  (when (or (and (booleanp linkd-enable-linkd-mode-in-target)
                  linkd-enable-linkd-mode-in-target)
             (and (functionp linkd-enable-linkd-mode-in-target)
                  (funcall linkd-enable-linkd-mode-in-target))
@@ -499,6 +509,7 @@ Return non-nil if a link is found.  Set match-data appropriately."
 ;; directly between links. The following interactive functions jump
 ;; from link to link.
 
+;;;###autoload
 (defun linkd-next-link ()
   "Move point to the next link, if any."
   (interactive)
@@ -514,6 +525,7 @@ Return non-nil if a link is found.  Set match-data appropriately."
       (goto-char (min (next-overlay-change (point))
                       (next-single-char-property-change (point) 'linkd))))))
 
+;;;###autoload
 (defun linkd-previous-link ()
   "Move point to the previous link, if any."
   (interactive)
@@ -534,32 +546,38 @@ Return non-nil if a link is found.  Set match-data appropriately."
 ;; It is not necessary to type the links manually. With these
 ;; functions, the user may create and edit links interactively.
 
+;;;###autoload
 (defun linkd-insert-single-arg-link (type-string argument)
   "Insert a link containing ARGUMENT."
   (insert (if (not (string= "" argument))
               (format (concat "(" "@%s %S)") type-string argument)
             (format (concat "(" "@%s)") type-string))))
 
+;;;###autoload
 (defun linkd-insert-tag (tag-name)
   "Insert a tag."
   (interactive "sTag name: ")
   (linkd-insert-single-arg-link ">" tag-name))
 
+;;;###autoload
 (defun linkd-insert-star (star-name)
   "Insert a star."
   (interactive "sStar name: ")
   (linkd-insert-single-arg-link "*" star-name))
 
+;;;###autoload
 (defun linkd-insert-wiki (wiki-name)
   "Insert a wiki link."
   (interactive "sWiki page: ")
   (linkd-insert-single-arg-link "!" wiki-name))
 
+;;;###autoload
 (defun linkd-insert-lisp (sexp)
   "Insert a Lisp sexp."
   (interactive "xLisp expression: ")
   (linkd-insert-single-arg-link "L" sexp))
 
+;;;###autoload
 (defun linkd-insert-link (&optional type current-values)
   "Insert a link.
 Optional arg TYPE is the link type.
@@ -581,6 +599,7 @@ Optional arg CURRENT-VALUES is a property list of current values."
                                                            link-args
                                                            " ")))))
 
+;;;###autoload
 (defun linkd-edit-link-at-point ()
   "Edit the Linkd link at point."
   (interactive)
@@ -719,7 +738,7 @@ Returns the file-name to the icon image file."
     (lambda () (linkd-find-next-tag-or-star ,tag-name))
     :render
     (lambda (beg end) (linkd-overlay beg end ,tag-name 'linkd-tag-name
-                                     ">" 'linkd-tag ,(linkd-icon "tag")))))
+                                ">" 'linkd-tag ,(linkd-icon "tag")))))
 
 
 ;; (@* "Processing Blocks") ------------------------------------------
@@ -904,6 +923,7 @@ ACTION is :end, deactivate the datablock."
   (with-current-buffer (funcall export-function)
     (write-file (expand-file-name output-file-name))))
 
+;;;###autoload
 (defun linkd-export-default ()
   "Export the current buffer with default settings to all available formats."
   (interactive)
@@ -912,7 +932,6 @@ ACTION is :end, deactivate the datablock."
            (output-file (concat (buffer-file-name) "." extension))
            (export-function (cdr format)))
       (linkd-export export-function output-file))))
-
 
 ;; (@* "Exporting to LaTeX") -----------------------------------------
 ;;
@@ -962,6 +981,7 @@ ACTION is :end, deactivate the datablock."
   "Insert LaTeX `Verbatim' begin or end tag, as needed."
   (if linkd-latex-in-verbatim (linkd-latex-end-verbatim) (linkd-latex-begin-verbatim)))
 
+;;;###autoload
 (defun linkd-latex-export ()
   "Render a buffer as a LaTeX book chapter."
   (interactive)
@@ -1141,6 +1161,7 @@ extra rules. Return the buffer."
 ;; You can turn this collection into a hypertext wiki by inserting
 ;; wiki links from one file to another.  Wiki names LookLikeThis.
 
+;;;###autoload
 (defun linkd-wiki-find-page (page-name)
   "Find Linkd wiki page named PAGE-NAME."
   (interactive "s")
@@ -1229,12 +1250,15 @@ These key bindings are in effect on a link:\n
   (unless (get-text-property beg 'linkd-fontified)
     (save-excursion
       (goto-char beg)
-      (add-text-properties beg (+ beg 1) (list 'linkd-fontified t))
-      (let* ((sexp (read (current-buffer)))
-             (plist (eval sexp))
-             (renderer (plist-get plist :render)))
-        (unless renderer (error "No renderer for link."))
-        (funcall renderer beg end)))))
+      (let ((sexp  (read (current-buffer))))
+        ;; For a Linkd link, the sexp is always a list whose car is a function
+        ;; name that begins with `@'.
+        (when (and sexp (fboundp (car sexp)))
+          (add-text-properties beg (+ beg 1) (list 'linkd-fontified t))
+          (let* ((plist     (eval sexp))
+                 (renderer  (plist-get plist :render)))
+            (unless renderer (error "No renderer for link."))
+            (funcall renderer beg end)))))))
 
 ;; Interface with the Emacs font-locking system.  You can configure
 ;; `linkd-do-font-lock' to add or remove font-locking rules that cause

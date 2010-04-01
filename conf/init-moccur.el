@@ -6,7 +6,7 @@
 (progn
   (require 'color-moccur)
   (require 'moccur-edit)
-  (dolist (mask '("\\.git/.+" "\\.docx$" "\\.xlsx$" "\\.pptx$"))
+  (dolist (mask '("\\.docx$" "\\.xlsx$" "\\.pptx$"))
     (add-to-list 'dmoccur-exclusion-mask mask))
   (setq moccur-split-word t))
 ;; migemoがrequireできる環境ならmigemoを使う
