@@ -18,6 +18,7 @@
   (define-key anything-map [(meta P)] 'anything-previous-source)
   (define-key anything-map [end] 'anything-scroll-other-window)
   (define-key anything-map [home] 'anything-scroll-other-window-down)
+  (define-key anything-map [(control h)] 'backward-delete-char)
   (define-key (anything-read-file-name-map) [(meta i)] 'anything-select-action)
 
   ;; (auto-install-from-url "http://www.emacswiki.org/cgi-bin/wiki/download/shell-history.el")
