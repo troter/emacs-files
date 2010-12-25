@@ -1,14 +1,18 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
-(when (and windows-p (getenv "SHLVL"))
+(when (and nt-p (getenv "SHLVL"))
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/setup-cygwin.el")
   ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/cygwin-mount.el")
   (setq cygwin-mount-cygwin-bin-directory
         (concat (getenv "SYSTEMDRIVE") "\\cygwin\\bin"))
   (require 'setup-cygwin)
+)
 
+(when (and windows-p (getenv "SHLVL"))
   (setq explicit-shell-file-name
-        (cond ((executable-find "zsh") "zsh")
+        (cond ((and nt-p (executable-find "f_zsh")) "f_zsh")
+              ((and nt-p (executable-find "f_bash")) "f_bash")
+              ((executable-find "zsh") "zsh")
               ((executable-find "bash") "bash")
               (t "sh"))
         shell-file-name explicit-shell-file-name
@@ -43,4 +47,4 @@
           (insert (ls-lisp-parse-symlink file))))))
 
   (when meadow-p (cd "~"))
-)
+  )
