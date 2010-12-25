@@ -1,5 +1,5 @@
 ;;; el-expectations.el --- minimalist unit testing framework
-;; $Id: el-expectations.el,v 1.53 2010/03/26 00:36:30 rubikitch Exp $
+;; Time-stamp: <2010-12-12 17:47:08 rubikitch>
 
 ;; Copyright (C) 2008, 2009, 2010  rubikitch
 
@@ -45,8 +45,8 @@
 ;; Below are customizable option list:
 ;;
 ;;  `expectations-execute-at-once'
-;;    If non-nil, execute selected expectation when pressing C-M-x
-;;    default = t
+;;    If non-nil, execute selected expectation when pressing C-M-x.
+;;    default = (quote all)
 
 ;; I love Jay Fields' expectations unit testing framework in Ruby. It
 ;; provides one syntax and can define various assertions. So I created
@@ -115,181 +115,32 @@
 ;; Success example http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations-success-sample.el
 ;; Failure example http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations-failure-sample.el
 
+
+;;; Bug Report:
+;;
+;; If you have problem, send a bug report via M-x exps-send-bug-report.
+;; The step is:
+;;  0) Setup mail in Emacs, the easiest way is:
+;;       (setq user-mail-address "your@mail.address")
+;;       (setq user-full-name "Your Full Name")
+;;       (setq smtpmail-smtp-server "your.smtp.server.jp")
+;;       (setq mail-user-agent 'message-user-agent)
+;;       (setq message-send-mail-function 'message-smtpmail-send-it)
+;;  1) Be sure to use the LATEST version of el-expectations.el.
+;;  2) Enable debugger. M-x toggle-debug-on-error or (setq debug-on-error t)
+;;  3) Use Lisp version instead of compiled one: (load "el-expectations.el")
+;;  4) Do it!
+;;  5) If you got an error, please do not close *Backtrace* buffer.
+;;  6) M-x exps-send-bug-report and M-x insert-buffer *Backtrace*
+;;  7) Describe the bug using a precise recipe.
+;;  8) Type C-c C-c to send.
+;;  # If you are a Japanese, please write in Japanese:-)
+
 ;;; History:
 
-;; $Log: el-expectations.el,v $
-;; Revision 1.53  2010/03/26 00:36:30  rubikitch
-;; no-error assertion
-;;
-;; Revision 1.52  2010/03/26 00:23:57  rubikitch
-;; small fix
-;;
-;; Revision 1.51  2010/03/20 21:42:54  rubikitch
-;; Apply patch by DanielHackney:
-;; Allow (error) expectation to accept an optional second argument,
-;; the symbol `*', to ignore an error message.
-;; It would be used as (error error *), and would pass for the body (error "some string").
-;;
-;; Revision 1.50  2010/02/13 20:20:53  rubikitch
-;; font-lock support for lisp-interaction-mode
-;;
-;; Revision 1.49  2009/10/10 09:19:40  rubikitch
-;; Fixed a displabug of `exps-display'
-;;
-;; Revision 1.48  2008/12/22 16:44:54  rubikitch
-;; `expr-desc': replace padding with highlight face.
-;;
-;; Revision 1.47  2008/08/28 19:28:37  rubikitch
-;; not-called assertion
-;;
-;; Revision 1.46  2008/08/28 19:06:24  rubikitch
-;; `exps-padding': use `window-width'
-;;
-;; Revision 1.45  2008/08/24 20:36:37  rubikitch
-;; mention `dont-compile'
-;;
-;; Revision 1.44  2008/08/22 20:48:52  rubikitch
-;; fixed a stupid bug
-;;
-;; Revision 1.43  2008/08/22 20:43:00  rubikitch
-;; non-nil (true) assertion
-;;
-;; Revision 1.42  2008/04/14 07:54:27  rubikitch
-;; *** empty log message ***
-;;
-;; Revision 1.41  2008/04/14 06:58:20  rubikitch
-;; *** empty log message ***
-;;
-;; Revision 1.40  2008/04/14 06:52:39  rubikitch
-;; better font-lock
-;;
-;; Revision 1.39  2008/04/13 11:49:08  rubikitch
-;; C-u M-x expectations-execute -> batch-expectations-in-emacs
-;;
-;; Revision 1.38  2008/04/13 11:39:51  rubikitch
-;; better result display.
-;;
-;; Revision 1.37  2008/04/13 11:30:17  rubikitch
-;; expectations-eval-defun
-;; batch-expectations-in-emacs
-;;
-;; Revision 1.36  2008/04/12 18:44:24  rubikitch
-;; extend `type' assertion to use predicates.
-;;
-;; Revision 1.35  2008/04/12 14:10:00  rubikitch
-;; updated el-mock info.
-;;
-;; Revision 1.34  2008/04/12 14:08:28  rubikitch
-;; * (require 'el-mock nil t)
-;; * updated `expectations' docstring
-;;
-;; Revision 1.33  2008/04/12 09:49:27  rubikitch
-;; *** empty log message ***
-;;
-;; Revision 1.32  2008/04/12 09:44:23  rubikitch
-;; batch-mode: handle multiple lisp files.
-;;
-;; Revision 1.31  2008/04/12 09:34:32  rubikitch
-;; colorize result summary
-;;
-;; Revision 1.30  2008/04/12 09:19:42  rubikitch
-;; show result summary at the top.
-;;
-;; Revision 1.29  2008/04/12 03:19:06  rubikitch
-;; Execute all expectations in batch mode.
-;;
-;; Revision 1.28  2008/04/12 03:07:43  rubikitch
-;; update doc.
-;;
-;; Revision 1.27  2008/04/10 17:02:40  rubikitch
-;; *** empty log message ***
-;;
-;; Revision 1.26  2008/04/10 14:27:47  rubikitch
-;; arranged code
-;; font-lock support
-;;
-;; Revision 1.25  2008/04/10 12:45:57  rubikitch
-;; mock assertion
-;;
-;; Revision 1.24  2008/04/10 08:46:19  rubikitch
-;; integration of `stub' in el-mock.el
-;;
-;; Revision 1.23  2008/04/10 07:11:40  rubikitch
-;; error data is evaluated.
-;;
-;; Revision 1.22  2008/04/10 06:14:12  rubikitch
-;; added finish message with current time.
-;;
-;; Revision 1.21  2008/04/09 20:45:41  rubikitch
-;; error assertion: with error data
-;;
-;; Revision 1.20  2008/04/09 20:02:46  rubikitch
-;; error-message assertion
-;;
-;; Revision 1.19  2008/04/09 15:07:29  rubikitch
-;; expectations-execute-at-once, eval-defun advice
-;;
-;; Revision 1.18  2008/04/09 08:57:37  rubikitch
-;; Batch Mode documentation
-;;
-;; Revision 1.17  2008/04/09 08:52:34  rubikitch
-;; * (eval-when-compile (require 'cl))
-;; * avoid a warning
-;; * count expectations/failures/errors
-;; * exitstatus = failures + errors (batch mode)
-;;
-;; Revision 1.16  2008/04/09 04:03:11  rubikitch
-;; batch-expectations: use command-line-args-left
-;;
-;; Revision 1.15  2008/04/09 03:54:00  rubikitch
-;; refactored
-;; batch-expectations
-;;
-;; Revision 1.14  2008/04/08 17:54:02  rubikitch
-;; fixed typo
-;;
-;; Revision 1.13  2008/04/08 17:45:08  rubikitch
-;; documentation.
-;; renamed: expectations.el -> el-expectations.el
-;;
-;; Revision 1.12  2008/04/08 16:54:50  rubikitch
-;; changed output format slightly
-;;
-;; Revision 1.11  2008/04/08 16:37:53  rubikitch
-;; error assertion
-;;
-;; Revision 1.10  2008/04/08 15:52:14  rubikitch
-;; refactored
-;;
-;; Revision 1.9  2008/04/08 15:39:06  rubikitch
-;; *** empty log message ***
-;;
-;; Revision 1.8  2008/04/08 15:38:03  rubikitch
-;; reimplementation of exps-assert-*
-;;
-;; Revision 1.7  2008/04/08 15:06:42  rubikitch
-;; better failure handling
-;;
-;; Revision 1.6  2008/04/08 14:45:58  rubikitch
-;; buffer assertion
-;; regexp assertion
-;; type assertion
-;;
-;; Revision 1.5  2008/04/08 13:16:16  rubikitch
-;; removed elk-test dependency
-;;
-;; Revision 1.4  2008/04/08 12:55:15  rubikitch
-;; next-error/occur-like interface
-;;
-;; Revision 1.3  2008/04/08 09:08:54  rubikitch
-;; prettier `desc' display
-;;
-;; Revision 1.2  2008/04/08 08:45:46  rubikitch
-;; exps-last-filename
-;;
-;; Revision 1.1  2008/04/08 07:52:30  rubikitch
-;; Initial revision
-;;
+;;; History:
+
+;; See http://www.rubyist.net/~rubikitch/gitlog/el-expectations.txt
 
 ;;; Code:
 
@@ -302,16 +153,23 @@
 
 (defvar exps-last-testcase nil)
 (defvar exps-last-filename nil)
+(defvar exps-last-position nil)
 (defvar expectations-result-buffer "*expectations result*")
 
-(defcustom expectations-execute-at-once t
-  "If non-nil, execute selected expectation when pressing C-M-x"
+(defcustom expectations-execute-at-once 'all
+  "If non-nil, execute selected expectation when pressing C-M-x.
+If 'all, execute all expectations blocks in current file.
+If other non-nil value, execute current expectations block."
   :group 'el-expectations)
+
 (defmacro expectations (&rest body)
   "Define a expectations test case.
 Use `expect' and `desc' to verify the code.
 Note that these are neither functions nor macros.
 These are keywords in expectations Domain Specific Language(DSL).
+
+`exps-tmpbuf' creates temporary buffers and they are killed
+after execute expectations.
 
 Synopsis:
 * (expect EXPECTED-VALUE BODY ...)
@@ -459,40 +317,53 @@ Example:
      ;; Stub function `hoge', which accepts any arguments and returns 3.
      (stub hoge => 3)
      (foo (+ 2 (hoge 10)) 6 7))
+   (desc \"tmpbuf\")
+   (expect \"foo\"
+     (with-current-buffer (exps-tmpbuf)
+       (insert \"foo\")
+       (buffer-string)))
    )
 "
-  (if noninteractive
+  (if (or noninteractive
+          (eq expectations-execute-at-once 'all))
       `(setq exps-last-testcase
              ',(append exps-last-testcase
                        '((new-expectations 1))
                       body)
-             exps-last-filename nil)
-    `(setq exps-last-testcase ',body
+             exps-last-filename ,(or load-file-name buffer-file-name))
+    ;; TODO add first label
+    `(setq exps-last-testcase ',(cons '(new-expectations 1) body)
            exps-last-filename ,(or load-file-name buffer-file-name))))
+
+(defvar exps-new-expectations-message "+++++ New expectations +++++")
 
 (defun exps-execute-test (test)
   (destructuring-bind (expect expected . actual)
       test
     (case expect
       (expect
-          (condition-case e
+          (if debug-on-error
               (exps-assert expected actual)
-            (error (cons 'error e))))
+            (condition-case e
+                (exps-assert expected actual)
+              (error (cons 'error e)))))
       (desc
        (cons 'desc expected))
       (new-expectations
-       (cons 'desc (concat "+++++ New expectations +++++"))))))
+       (cons 'desc exps-new-expectations-message)))))
 
 
+(defvar exps-last-error-position nil)
 (defun expectations-execute (&optional testcase)
   "Execute last-defined `expectations' test.
 With prefix argument, do `batch-expectations-in-emacs'."
   (interactive)
+  (setq exps-last-error-position nil)
   (if current-prefix-arg
       (batch-expectations-in-emacs)
     (exps-display
-     (loop for test in (or testcase exps-last-testcase)
-           collecting (exps-execute-test test)))))
+     (mapcar 'exps-execute-test (or testcase exps-last-testcase))))
+  (exps-cleanup))
 
 ;;;; assertions
 (defvar exps-assert-functions
@@ -692,7 +563,7 @@ With prefix argument, do `batch-expectations-in-emacs'."
   :group 'el-expectations)
 (defvar exps-red-face 'expectations-red)
 (defvar exps-green-face 'expectations-green)
-(defun exps-result-string (s f e)
+(defun exps-result-string (s f e d)
   (let ((msg1 (format "%d expectations, %d failures, %d errors\n"
                       (+ s f e) f e))
         (msg2 (format "Expectations finished at %s\n"  (current-time-string))))
@@ -707,85 +578,144 @@ With prefix argument, do `batch-expectations-in-emacs'."
     (erase-buffer)
     (exps-display-mode)
     (insert (format "Executing expectations in %s...\n" exps-last-filename))
-    (loop for result in results
-          for i from 1
-          do (insert
-              (format
-               "%-3d:%s\n" i
-               (if (consp result)
-                   (case (car result)
-                     (pass "OK")
-                     (fail (cdr result))
-                     (error (format "ERROR: %s" (cdr result)))
-                     (desc (exps-desc (cdr result)))
-                     (t "not happened!"))
-                 result))))
+    (insert "==== Failures and Errors ====\n")
+    (exps-insert-not-passes results)
+    (insert "\n"
+            "==== All Results ====\n")
+    (exps-insert-results results)
     (insert "\n")
-    (loop for result in results
-          for status = (car result)
-          when (eq 'pass status) collecting result into successes
-          when (eq 'fail status) collecting result into failures
-          when (eq 'error status) collecting result into errors
-          with summary
-          finally
-          (destructuring-bind (s f e)
-              (mapcar #'length (list successes failures errors))
-            (setq summary (exps-result-string s f e))
-            (insert summary)
-            (goto-char (point-min))
-            (forward-line 1)
-            (insert summary)
-            (goto-char (point-min))
-            (return (+ f e))))
+    (exps-insert-counts results)
     (display-buffer (current-buffer))))
+
+(defun exps-insert-not-passes (results)
+  (destructuring-bind (pass fail error desc)
+      (exps-classify-results results)
+    (loop with xxx = (sort (append fail error) (lambda (a b) (< (car a) (car b))))
+          for (i . result) in xxx
+          do (insert (exps-insert-result i result)))))
+
+(defun exps-classify-results (results)
+  (loop for result in results
+        for i from 1
+        for status = (car result)
+        for withno = (cons i result)
+        when (eq 'pass status) collecting withno into successes
+        when (eq 'fail status) collecting withno into failures
+        when (eq 'error status) collecting withno into errors
+        when (eq 'desc status) collecting withno into descs
+        finally return (list successes failures errors descs)))
+
+(defun exps-insert-counts (results)
+  (let ((summary (exps-result-summary-string results)))
+    (insert summary)
+    (goto-char (point-min))
+    (forward-line 1)
+    (insert summary)
+    (goto-char (point-min))))
+
+(defun exps-result-summary-string (results)
+  (apply #'exps-result-string (mapcar #'length (exps-classify-results results))))
+
+(defun exps-insert-results (results)
+  (loop for result in results
+        for i from 1
+        do (insert (exps-insert-result i result))))
+
+(defun exps-insert-result (i result)
+  (format
+   "%-3d:%s\n" i
+   (if (consp result)
+       (case (car result)
+         (pass "OK")
+         (fail (cdr result))
+         (error (format "ERROR: %s" (cdr result)))
+         (desc (exps-desc (cdr result)))
+         (t "not happened!"))
+     result)))
 
 (defun exps-goto-expect ()
   (interactive)
   ;; assumes that current-buffer is *expectations result*
-  (let ((n (progn
-             (forward-line 0)
-             (looking-at "^[0-9]+")
-             (string-to-number (match-string 0)))))
-    (when exps-last-filename
-      (with-current-buffer (find-file-noselect exps-last-filename)
-        (pop-to-buffer (current-buffer))
-        (goto-char (point-min))
-        (search-forward "(expectations\n" nil t)
-        (forward-sexp n)
-        (forward-sexp -1)))))
+  (when exps-last-filename
+    (with-current-buffer (find-file-noselect exps-last-filename)
+      (pop-to-buffer (current-buffer))
+      (goto-char (point-min))
+      (dotimes (n (exps-current-no))
+        (re-search-forward "(\\(expectations\\|desc\\|expect\\)\\_>" nil t)))))
+
+(defun exps-current-no ()
+  (with-current-buffer (exps-result-buffer)
+    (and (forward-line 0)
+         (looking-at "^[0-9]+")
+         (string-to-number (match-string 0)))))
+
+(defun exps-result-buffer ()
+  (if (next-error-buffer-p (current-buffer))
+      (current-buffer)
+    (next-error-find-buffer nil nil
+                            (lambda ()
+                              (eq major-mode 'exps-display-mode)))))
 
 (defun exps-next-error (&optional argp reset)
   "Move to the Nth (default 1) next failure/error in *expectations result* buffer.
 Compatibility function for \\[next-error] invocations."
   (interactive "p")
   ;; we need to run exps-find-failure from within the *expectations result* buffer
-  (with-current-buffer
-      ;; Choose the buffer and make it current.
-      (if (next-error-buffer-p (current-buffer))
-	  (current-buffer)
-	(next-error-find-buffer nil nil
-				(lambda ()
-				  (eq major-mode 'exps-display-mode))))
-    (goto-char (cond (reset (point-min))
-		     ((< argp 0) (line-beginning-position))
-		     ((> argp 0) (line-end-position))
-		     ((point))))
-    (exps-find-failure
-     (abs argp)
-     (if (> 0 argp)
-	 #'re-search-backward
-       #'re-search-forward)
-     "No more failures")
+  (with-current-buffer (exps-result-buffer) 
     ;; In case the *expectations result* buffer is visible in a nonselected window.
     (let ((win (get-buffer-window (current-buffer) t)))
       (if win (set-window-point win (point))))
-    (exps-goto-expect)))
+    (and exps-last-error-position (goto-char exps-last-error-position))
+    (goto-char (cond (reset (point-min))
+		     ((< argp 0) (line-beginning-position))
+		     ((< 0 argp) (line-end-position))
+		     ((point))))
+    ;; (message (format "argp=%d reset=%S %s"argp reset (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
+    (save-restriction
+      (exps-narrow-to-failures-and-errors)
+      (exps-find-failure
+       (abs argp)
+       (if (< argp 0)
+           #'re-search-backward
+         #'re-search-forward)
+       "No more failures")
+      (exps-goto-expect)
+      (setq exps-last-error-position (point)))
+    ;; (message (format "argp=%d reset=%S %s"argp reset (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
+    ))
+
+(defun exps-narrow-to-failures-and-errors ()
+  (narrow-to-region
+   (point-min)
+   (save-excursion (and (search-forward "\n==== All Results ====\n" nil t) (point)))))
 
 (defun exps-find-failure (n search-func errmsg)
   (loop repeat n do
         (unless (funcall search-func "^[0-9]+ *:\\(ERROR\\|FAIL\\)" nil t)
-          (error errmsg))))
+          (error errmsg)))
+  (point))
 
+;;;; temporary buffer
+(declare-function exps-tmpbuf "el-expectations.el")
+(declare-function exps-cleanup-tmpbuf "el-expectations.el")
+(lexical-let ((count 1))
+  (defun exps-tmpbuf ()
+    (with-current-buffer (get-buffer-create (format " *el-expectations tmp:%d" count))
+      (prog1 (current-buffer)
+        (incf count)
+        (erase-buffer))))
+  (defun exps-cleanup-tmpbuf ()
+    (setq count 1)
+    (loop for buf in (buffer-list)
+          for bname = (buffer-name buf)
+          when (string-match " \\*el-expectations tmp:" bname)
+          do (kill-buffer buf))))
+(defun exps-cleanup ()
+  (exps-cleanup-tmpbuf))
+
+;; (exps-tmpbuf)
+;; (exps-cleanup)
+;; (find-function 'exps-tmpbuf)
 ;;;; edit support
 (put 'expect 'lisp-indent-function 1)
 (put 'expectations 'lisp-indent-function 0)
@@ -817,15 +747,36 @@ Compatibility function for \\[next-error] invocations."
   "Do `eval-defun'.
 If `expectations-execute-at-once' is non-nil, execute expectations if it is an expectations form."
   (interactive "P")
+  (setq exps-last-position (point))
   (eval-defun arg)
-  (when expectations-execute-at-once
-    (save-excursion
-      (beginning-of-defun)
-      (and (looking-at "(expectations\\|(.+(fboundp 'expectations)\\|(dont-compile\n.*expectations")
-           (expectations-execute)))))
+  (when (exps-current-form-is-expectations)
+    (when (eq expectations-execute-at-once 'all)
+      (setq exps-last-testcase nil)
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward "^\\s-*(expectations\n" nil t)
+          (eval-defun arg))))
+    (expectations-execute)))
 
-(substitute-key-definition 'eval-defun 'expectations-eval-defun emacs-lisp-mode-map)(substitute-key-definition 'eval-defun 'expectations-eval-defun lisp-interaction-mode-map)
+(defun exps-current-form-is-expectations ()
+  (save-excursion
+    (beginning-of-defun)
+    (looking-at "(expectations\\|(.+(fboundp 'expectations)\\|(dont-compile\n.*expectations")))
 
+(substitute-key-definition 'eval-defun 'expectations-eval-defun emacs-lisp-mode-map)
+(substitute-key-definition 'eval-defun 'expectations-eval-defun lisp-interaction-mode-map)
+
+;;;; To avoid test duplication
+(defadvice load (before el-expectations activate)
+  (and (equal exps-last-filename (locate-library (ad-get-arg 0)))
+       (setq exps-last-testcase nil)))
+;; (progn (ad-disable-advice 'load 'before 'el-expectations) (ad-update 'load))
+
+(defadvice eval-buffer (before el-expectations activate)
+  (and buffer-file-name
+       (equal exps-last-filename buffer-file-name)
+       (setq exps-last-testcase nil)))
+;; (progn (ad-disable-advice 'eval-buffer 'before 'el-expectations) (ad-update 'eval-buffer))
 ;;;; batch mode
 (defun batch-expectations ()
   (if (not noninteractive)
@@ -853,8 +804,34 @@ If `expectations-execute-at-once' is non-nil, execute expectations if it is an e
                                   (string= "0" (match-string 2)))
                              exps-green-face
                            exps-red-face)))))
+
+;;;; Bug report
+(defvar exps-maintainer-mail-address
+  (concat "rubiki" "tch@ru" "by-lang.org"))
+(defvar exps-bug-report-salutation
+  "Describe bug below, using a precise recipe.
+
+When I executed M-x ...
+
+How to send a bug report:
+  1) Be sure to use the LATEST version of el-expectations.el.
+  2) Enable debugger. M-x toggle-debug-on-error or (setq debug-on-error t)
+  3) Use Lisp version instead of compiled one: (load \"el-expectations.el\")
+  4) If you got an error, please paste *Backtrace* buffer.
+  5) Type C-c C-c to send.
+# If you are a Japanese, please write in Japanese:-)")
+(defun exps-send-bug-report ()
+  (interactive)
+  (reporter-submit-bug-report
+   exps-maintainer-mail-address
+   "el-expectations.el"
+   (apropos-internal "^exps-" 'boundp)
+   nil nil
+   exps-bug-report-salutation))
+
+
 (provide 'el-expectations)
 
 ;; How to save (DO NOT REMOVE!!)
-;; (emacswiki-post "el-expectations.el")
+;; (progn (git-log-upload) (emacswiki-post "el-expectations.el"))
 ;;; el-expectations.el ends here

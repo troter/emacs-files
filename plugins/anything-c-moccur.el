@@ -674,6 +674,7 @@ nilなら使用しない"
 (defun anything-c-moccur-from-isearch ()
   "Run `anything-c-moccur-occur-by-moccur' with isearch string."
   (interactive)
+  (isearch-exit)
   (anything-c-moccur-occur-by-moccur-base (anything-c-moccur-isearch-get-regexp)))
 ;; (define-key isearch-mode-map "\M-o" 'anything-c-moccur-from-isearch)
 

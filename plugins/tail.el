@@ -22,7 +22,7 @@
 ;; Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 ;; 02111-1307, USA.
 
-;;  $Id: tail.el,v 1.1.1.1 2002/07/01 17:04:37 benj Exp $
+;;  $Id: tail.el,v 1.2 2010/10/24 16:23:11 benj Exp $
 
 ;;; Commentary:
 
@@ -32,8 +32,6 @@
 
 ;;  This was developed for GNU Emacs 20.x but should work as well for
 ;;  XEmacs 21.x
-
-;;  Primary URL for tail.el is http://inferno.cs.univ-paris8.fr/~drieu/emacs/
 
 
 ;;; Code:
@@ -74,7 +72,7 @@
 ;; Functions
 
 ;; Taken from calendar/appt.el
-(defun tail-disp-window( tail-buffer tail-msg )
+(defun tail-disp-window (tail-buffer tail-msg)
   "Display some content specified by ``tail-msg'' inside buffer
 ``tail-msg''.  Create this buffer if necessary and put it inside a
 newly created window on the lowest side of the frame."
@@ -84,44 +82,43 @@ newly created window on the lowest side of the frame."
   ;; Make sure we're not in the minibuffer
   ;; before splitting the window.
 
-  (if (window-minibuffer-p)
-      (other-frame -1))
-    
+  (if (equal (selected-window) (minibuffer-window))
+      (if (other-window 1) 
+	  (select-window (other-window 1))
+	(if (and window-system (other-frame 1))
+	    (select-frame (other-frame 1)))))
       
   (let* ((this-buffer (current-buffer))
 	 (this-window (selected-window))
 	 (tail-disp-buf (set-buffer (get-buffer-create tail-buffer))))
-    
+
     (if (cdr (assq 'unsplittable (frame-parameters)))
-        ;; In an unsplittable frame, use something somewhere else.
-        (display-buffer tail-disp-buf)
+	;; In an unsplittable frame, use something somewhere else.
+	(display-buffer tail-disp-buf)
       (unless (or (special-display-p (buffer-name tail-disp-buf))
-                  (same-window-p (buffer-name tail-disp-buf))
-                  (get-buffer-window tail-buffer))
+		  (same-window-p (buffer-name tail-disp-buf))
+		  (get-buffer-window tail-buffer))
+	;; By default, split the bottom window and use the lower part.
+	(tail-select-lowest-window)
+	(split-window))
+      (pop-to-buffer tail-disp-buf))
 
-        ;; By default, split the bottom window and use the lower part.
-        (tail-select-lowest-window)
-
-        (if (not (window-minibuffer-p))
-            (split-window))
-	(pop-to-buffer tail-disp-buf))
-    
-      (toggle-read-only 0)
-      (if tail-volatile
-	  (erase-buffer))
-      (insert-string tail-msg)
-      (toggle-read-only 1)
-      (shrink-window-if-larger-than-buffer (get-buffer-window tail-disp-buf t))
-      (if (> (window-height (get-buffer-window tail-disp-buf t)) tail-max-size)
-	  (shrink-window (- (window-height (get-buffer-window tail-disp-buf t)) tail-max-size)))
-      (set-buffer-modified-p nil)
-      (if tail-raise
-	  (raise-frame (selected-frame)))
-      (select-window this-window)
-      (if tail-audible
-	  (beep 1))
-      (if tail-hide-delay
-	  (run-with-timer tail-hide-delay nil 'tail-hide-window tail-buffer)))))
+    (toggle-read-only 0)
+    (if tail-volatile
+	(erase-buffer))
+    (insert-string tail-msg)
+    (toggle-read-only 1)
+    (shrink-window-if-larger-than-buffer (get-buffer-window tail-disp-buf t))
+    (if (> (window-height (get-buffer-window tail-disp-buf t)) tail-max-size)
+	(shrink-window (- (window-height (get-buffer-window tail-disp-buf t)) tail-max-size)))
+    (set-buffer-modified-p nil)
+    (if tail-raise
+	(raise-frame (selected-frame)))
+    (select-window this-window)
+    (if tail-audible
+	(beep 1))
+    (if tail-hide-delay
+	(run-with-timer tail-hide-delay nil 'tail-hide-window tail-buffer))))
 
 
 (defun tail-hide-window (buffer)   
@@ -155,7 +152,7 @@ newly created window on the lowest side of the frame."
 ``file'' *cannot* be a remote file specified with ange-ftp syntaxm
 because it is passed to the Unix tail command."
   (interactive "Ftail file: ")
-  (tail-command "tail" "-f" file))	; TODO: what if file is remote (i.e. via ange-ftp)
+  (tail-command "tail" "-F" file)) ; TODO: what if file is remote (i.e. via ange-ftp)
   
 
 (defun tail-command (command &rest args)
