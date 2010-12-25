@@ -76,12 +76,12 @@
 
 ;; (@* "various path")
 ;; - (@file :file-name libraries-directory)
-;; - (@file :file-name conf-directory)
+;; - (@file :file-name initialize-directory)
 ;; - (@file :file-name plugins-directory)
 ;; - (@file :file-name info-directory)
 (setq base-directory "~/.emacs.d"
       libraries-directory (expand-file-name "library" base-directory)
-      conf-directory (expand-file-name "conf" base-directory)
+      initialize-directory (expand-file-name "initialize" base-directory)
       plugins-directory (expand-file-name "plugins" base-directory)
       info-directory (expand-file-name "info" base-directory))
 
@@ -148,9 +148,9 @@
 
 ;; load direcotry files.
 ;; - (@file :file-name libraries-directory)
-;; - (@file :file-name conf-directory)
+;; - (@file :file-name initialize-directory)
 (load-directory-files libraries-directory "^.+el$")
 (load-directory-files plugins-directory "^subdirs\\.el$")
-(load-directory-files conf-directory "^\\+?init.+el$")
+(load-directory-files initialize-directory "^\\+?init.+el$")
 
 ;;; End of .emacs.el
