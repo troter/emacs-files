@@ -1,6 +1,12 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
 (when (and windows-p (getenv "SHLVL"))
+  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/setup-cygwin.el")
+  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/cygwin-mount.el")
+  (setq cygwin-mount-cygwin-bin-directory
+        (concat (getenv "SYSTEMDRIVE") "\\cygwin\\bin"))
+  (require 'setup-cygwin)
+
   (setq explicit-shell-file-name
         (cond ((executable-find "zsh") "zsh")
               ((executable-find "bash") "bash")
@@ -9,13 +15,6 @@
         shell-command-switch "-c"
         ;; drive letter completion on shell-mode.
         shell-file-name-chars "~/A-Za-z0-9_^$!#%&{}@`'.,:()-")
-
-  ;; cygwin-mount
-  (setq cygwin-mount-cygwin-bin-directory
-        (concat (getenv "SYSTEMDRIVE") "\\cygwin\\bin"))
-  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/cygwin-mount.el")
-  (require 'cygwin-mount)
-  (cygwin-mount-activate)
 
   ;; argument-editing の設定
   (when (require 'mw32script nil t)
