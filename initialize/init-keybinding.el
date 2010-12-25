@@ -4,7 +4,7 @@
 (defun-eval-after-load 'anything
   ;;(global-set-key [(control x) (k)] 'anything-kill-buffers) ; kill-buffers
   ;;(global-set-key [(control x) (b)] 'anything-for-buffers)    ; switch-to-buffer
-  (global-set-key [(control x) (control f)] 'anything-filelist+)    ;find-fine
+  ;;(global-set-key [(control x) (control f)] 'anything-filelist+)    ;find-fine
   (global-set-key [(control x) (b)] 'anything-for-files)    ; switch-to-buffer
   (global-set-key [(meta y)] 'anything-show-kill-ring)        ; yank-pop
   (global-set-key [(meta %)] 'anything-query-replace-regexp)  ; query-replace-regexp

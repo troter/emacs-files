@@ -33,6 +33,7 @@
   (require 'anything-kyr-config)
   ;; Automatically collect symbols by 100 secs
   (anything-lisp-complete-symbol-set-timer 100)
+  (anything-read-string-mode '(string file buffer variable command))
 
   (defadvice anything-read-buffer
     (around transmissive-keyboard-quit-anything-read-buffer)
