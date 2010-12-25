@@ -2,12 +2,24 @@
 
 ;;; (@* "TODO")
 ;;
+;; - init-loader.elへの移行
+;; -- ref: http://d.hatena.ne.jp/kitokitoki/20101205/p1
+;; -- ref: http://tech.kayac.com/archive/divide-dot-emacs.html
+;; - anything-with-everything.elの導入
+;; -- ref: http://d.hatena.ne.jp/yaotti/20101208/1291778282
+;; - anything-fileslit+の設定
+;; -- http://d.hatena.ne.jp/rubikitch/20101118/anything
+;; -- http://d.hatena.ne.jp/rubikitch/20100915/anything
+;; - windwos上でtrampを動かす
+;; -- http://highmt.wordpress.com/2009/12/19/ntemacs%E3%81%A7tramp%E3%82%92%E4%BD%BF%E3%81%86/
+;; -- http://blogs.yahoo.co.jp/natto_heaven/21995009.html
+;; - malabar-modeの設定
+;; -- https://github.com/espenhw/malabar-mode
 ;; - folding.elの設定を書く
 ;; - moccurとanything-c-moccurの使い方を調べる
 ;; - re-builder.elを試す
 ;; - psvn.el, dsvn.elの調査
 ;; - icicles.elがどんなものか試す
-;; - org-modeを試す
 ;; - windows, mac, linuxで利用できるsuper key, hyper keyの設定
 ;;   （右optionや右windowskeyに設定したい）
 ;;
