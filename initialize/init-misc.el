@@ -52,9 +52,3 @@
 ;; http://www.fan.gr.jp/~ring/Meadow/meadow.html#ys:no-kill-new-duplicates
 (defadvice kill-new (before ys:no-kill-new-duplicates activate)
   (setq kill-ring (delete (ad-get-arg 0) kill-ring)))
-
-(progn
-  ;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/multi-term.el")
-  (require 'multi-term)
-  (setq multi-term-program shell-file-name)
-  )
