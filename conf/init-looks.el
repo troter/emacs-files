@@ -55,8 +55,9 @@
 
 
 (and ; mouse 
- (mouse-wheel-mode t) ;;ホイールマウス
  (when (and windows-p window-system)
+   ;;ホイールマウス
+   (mouse-wheel-mode t)
    ;; マウスカーソルを消す
    (setq w32-hide-mouse-on-key t)
    (setq w32-hide-mouse-timeout 5000)))
