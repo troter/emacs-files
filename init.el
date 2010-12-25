@@ -15,6 +15,15 @@
 ;; -- http://blogs.yahoo.co.jp/natto_heaven/21995009.html
 ;; - malabar-modeの設定
 ;; -- https://github.com/espenhw/malabar-mode
+;; -- http://aemon.com/file_dump/ensime_manual.html
+;; - clojure-mode などの設定
+;; -- http://www.emacswiki.org/emacs/ClojureMode
+;; -- http://d.hatena.ne.jp/t2ru/20100123/1264199643
+;; -- http://www.serendip.ws/archives/4812
+;; -- https://github.com/technomancy/leiningen
+;; - scala-modeの設定
+;; -- http://www.emacswiki.org/emacs/scala
+;; -- http://aemon.com/file_dump/ensime_manual.html
 ;; - folding.elの設定を書く
 ;; - moccurとanything-c-moccurの使い方を調べる
 ;; - re-builder.elを試す
