@@ -22,6 +22,11 @@
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
+(setq make-backup-files t)
+(setq backup-directory-alist
+      (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
+            backup-directory-alist))
+
 ;; (auto-install-from-url "http://stud4.tuwien.ac.at/~e0225855/linum/linum.el")
 (when emacs22-p
   (require 'linum))
