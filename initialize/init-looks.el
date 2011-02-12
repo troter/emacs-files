@@ -13,7 +13,7 @@
   (set-face-foreground 'mode-line-inactive "gray30")
   (set-face-background 'mode-line-inactive "gray85")
 
-  (add-to-list 'default-frame-alist '(alpha . 85))
+  (add-to-list 'default-frame-alist '(alpha . 92))
   (set-frame-parameter nil 'alpha '(85 50))
 
   (set-scroll-bar-mode 'right) ;;スクロールバーを右に表示

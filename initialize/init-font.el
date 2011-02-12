@@ -5,7 +5,8 @@
    (windows-p
     (cond
      (emacs23-p
-      (set-default-font "M+2VM+IPAG circle-8"))
+      ;(set-default-font "M+2VM+IPAG circle-8")
+      (set-default-font "M+2VM+IPAG circle-10"))
      (t
       (setq w32-use-w32-font-dialog nil)
       (setq scalable-fonts-allowed t)
