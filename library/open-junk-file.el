@@ -2,7 +2,7 @@
 
 ;; refer: http://d.hatena.ne.jp/rubikitch/20080923/1222104034
 
-(defvar junk-file-directory "~/memo/junk")
+(defvar junk-file-directory "~/Dropbox/memo/junk")
 
 (defun open-junk-file ()
   (interactive)

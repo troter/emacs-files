@@ -1,7 +1,7 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
-(defvar tr-memo-file "~/My Dropbox/memo/memo.org")
-(defvar dropbox-directory "~/My Dropbox/")
+(defvar tr-memo-file "~/Dropbox/memo/memo.org")
+(defvar dropbox-directory "~/Dropbox/")
 
 (defun dropbox ()
   (interactive)
