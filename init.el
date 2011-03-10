@@ -167,6 +167,11 @@
             (when (load file nil t)
               (message "`%s' loaded." file))) files)))
 
+(when
+    (load
+     (expand-file-name "~/.emacs.d/elpa/package.el"))
+  (package-initialize))
+
 ;; load direcotry files.
 ;; - (@file :file-name libraries-directory)
 ;; - (@file :file-name initialize-directory)
