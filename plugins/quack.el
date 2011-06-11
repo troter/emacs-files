@@ -1,11 +1,11 @@
 ;;; quack.el --- enhanced support for editing and running Scheme code
 
-(defconst quack-copyright    "Copyright (C) 2002-2010 Neil Van Dyke")
+(defconst quack-copyright    "Copyright (C) 2002-2011 Neil Van Dyke")
 (defconst quack-copyright-2  "Portions Copyright (C) Free Software Foundation")
 ;; Emacs-style font-lock specs adapted from GNU Emacs 21.2 scheme.el.
 ;; Scheme Mode menu adapted from GNU Emacs 21.2 cmuscheme.el.
 
-(defconst quack-version      "0.40")
+(defconst quack-version      "0.41")
 (defconst quack-author-name  "Neil Van Dyke")
 (defconst quack-author-email "neil@neilvandyke.org")
 (defconst quack-web-page     "http://www.neilvandyke.org/quack/")
@@ -20,7 +20,7 @@ particular purpose.  See the GNU General Public License for more details.  See
 http://www.gnu.org/licenses/ for details.  For other licenses and consulting,
 please contact Neil Van Dyke.")
 
-(defconst quack-cvsid "$Id: quack.el,v 1.469 2010/12/23 00:01:33 neilpair Exp $")
+(defconst quack-cvsid "$Id: quack.el,v 1.470 2011/06/04 08:44:43 neilpair Exp $")
 
 ;;; Commentary:
 
@@ -113,6 +113,9 @@ please contact Neil Van Dyke.")
 ;;     neil@neilvandyke.org to add you to the moderated `scheme-announce' list.
 
 ;; HISTORY:
+;;
+;;     Version 0.41 (2011-06-04)
+;;         * Added `sxml-match' to `scheme-indent-function'.
 ;;
 ;;     Version 0.40 (2010-12-22)
 ;;         * Added indent rules for Racket `let:', `let*:', and `match'.  And
@@ -3203,6 +3206,7 @@ Can be used in your `~/.emacs' file something like this:
 (put 'receive            'scheme-indent-function 2)
 (put 'send*              'scheme-indent-function 1)
 (put 'sigaction          'scheme-indent-function 1)
+(put 'sxml-match         'scheme-indent-function 1)
 (put 'syntax-case        'scheme-indent-function 2)
 (put 'syntax/loc         'scheme-indent-function 1)
 (put 'unit               'scheme-indent-function 'defun)
