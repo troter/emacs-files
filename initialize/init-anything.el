@@ -1,7 +1,6 @@
 ;;; -*- coding: utf-8; indent-tabs-mode: nil -*-
 
 ;; (auto-install-batch "anything")
-;; (auto-install-from-url "http://www.emacswiki.org/emacs/download/descbinds-anything.el")
 (when (require 'anything-startup)
   ;; replace completion commands with `anything'
   (anything-read-string-mode 1)
