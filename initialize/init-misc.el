@@ -66,6 +66,6 @@
 (setq org-remember-templates
       '(("Todo" ?t "** TODO %?\n   %i\n   %a\n   %t" nil "Inbox")
         ("Bug" ?b "** TODO %?   :bug:\n   %i\n   %a\n   %t" nil "Inbox")
-        ("Idea" ?i "** IDEA %?\n   %i\n   %a\n   %t" nil "New Ideas")
-        ("Note" ?n "** NOTE %?\n   %i\n   %a\n   %t" nil "Note")
+        ("Idea" ?i "** %?\n   %i\n   %a\n   %t" nil "New Ideas")
+        ("Note" ?n "** %?\n   %i\n   %a\n   %t" nil "Note")
         ))
