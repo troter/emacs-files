@@ -20,8 +20,8 @@
   ;;; keybindings
   (ac-set-trigger-key "TAB")
 
-  ;; Don't start completion automatically
-  (setq ac-auto-start nil)
+  ;; ;; Don't start completion automatically
+  ;; (setq ac-auto-start nil)
   (global-set-key "\M-/" 'auto-complete)
 
   ;; Use C-n/C-p to select candidates
