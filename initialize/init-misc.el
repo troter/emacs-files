@@ -57,3 +57,15 @@
 ;; http://www.fan.gr.jp/~ring/Meadow/meadow.html#ys:no-kill-new-duplicates
 (defadvice kill-new (before ys:no-kill-new-duplicates activate)
   (setq kill-ring (delete (ad-get-arg 0) kill-ring)))
+
+
+;; org-remember
+(org-remember-insinuate)
+(setq org-directory "~/Dropbox/memo/")
+(setq org-default-notes-file (concat org-directory "note.org"))
+(setq org-remember-templates
+      '(("Todo" ?t "** TODO %?\n   %i\n   %a\n   %t" nil "Inbox")
+        ("Bug" ?b "** TODO %?   :bug:\n   %i\n   %a\n   %t" nil "Inbox")
+        ("Idea" ?i "** IDEA %?\n   %i\n   %a\n   %t" nil "New Ideas")
+        ("Note" ?n "** NOTE %?\n   %i\n   %a\n   %t" nil "Note")
+        ))
