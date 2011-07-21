@@ -64,8 +64,9 @@
 (setq org-directory "~/Dropbox/memo/")
 (setq org-default-notes-file (concat org-directory "note.org"))
 (setq org-remember-templates
-      '(("Todo" ?t "** TODO %?\n   %i\n   %a\n   %t" nil "Inbox")
-        ("Bug" ?b "** TODO %?   :bug:\n   %i\n   %a\n   %t" nil "Inbox")
-        ("Idea" ?i "** %?\n   %i\n   %a\n   %t" nil "New Ideas")
-        ("Note" ?n "** %?\n   %i\n   %a\n   %t" nil "Note")
+      '(("Todo" ?t "** TODO %? %T\n   %i\n   %a" nil "Inbox")
+        ("Bug" ?b "** TODO %?   :bug: %T\n   %i\n   %a" nil "Inbox")
+        ("Conference" ?c "** %? %T\n   %i" nil "Conference minutes")
+        ("Idea" ?i "** %? %T\n   %i\n   %a" nil "New Ideas")
+        ("Note" ?n "** %? %T\n   %i\n   %a" nil "Note")
         ))
